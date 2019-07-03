@@ -457,7 +457,7 @@ checkpoint clusters_fasta:
         clusters = rules.clustering.output.node_data,
         nt_muts = rules.clustering.input.nt_muts
     output:
-        done = directory("results/clusters/{lineage}_{resolution}")
+        done = directory("results/clusters/{lineage}_{resolution}/")
     shell:
         """
         python3 scripts/genomes_cluster.py \
@@ -472,15 +472,15 @@ rule format_genomes_clusters:
     input:
         fastas = "results/clustering/{lineage}_{resolution}/{cluster}.fasta"
     output:
-        genomes = "results/genomes_{lineage}_cluster{cluster}_{resolution}.fasta"
+        genomes = "results/genomes_{lineage}_{resolution}_cluster{cluster}.fasta"
     shell:
         """
-        cp {input.fastas} {output.genomes}
+        cp {input.fastas} > {output.genomes}
         """
 
 def fasta_done_input(wildcards):
     checkpoint_output = checkpoints.clusters_fasta.get(**wildcards).output.done
-    return expand("results/genomes_{lineage}_cluster{cluster}_{resolution}.fasta", lineage=wildcards.lineage, resolution=wildcards.resolution, cluster=glob_wildcards(os.path.join(checkpoint_output, "{cluster}.fasta")).cluster) 
+    return expand("results/genomes_{lineage}_{resolution}_cluster{cluster}.fasta", lineage=wildcards.lineage, resolution=wildcards.resolution, cluster=glob_wildcards(os.path.join(checkpoint_output, "{cluster}.fasta")).cluster) 
 
 rule clusters_done:
     message: "Clusters are finished."
