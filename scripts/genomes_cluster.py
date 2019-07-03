@@ -45,7 +45,7 @@ Outputs python dictionary sequences into fasta files
 '''
 def genomes(seq_dict, lineage, resolution):
     for cluster, cluster_strains in seq_dict.items():
-        with open ('results/clusters/'+lineage+'_'+resolution+'/'+cluster+'.fasta', "w") as fasta: 
+        with open ('results/genomes_'+lineage+'_cluster'+cluster+'_'+resolution+'.fasta', "w") as fasta: 
             for strain, seq in cluster_strains.items():
                 fasta.write('>' + strain + ' | cluster'+cluster + '\n' + seq + '\n')    
     return fasta

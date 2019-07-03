@@ -58,7 +58,7 @@ rule all:
     input:
         auspice_tree = expand("auspice/seattle_flu_seasonal_{lineage}_{segment}_{resolution}_global_tree.json", lineage=lineages, segment=segments, resolution=resolutions),
         auspice_meta = expand("auspice/seattle_flu_seasonal_{lineage}_{segment}_{resolution}_global_meta.json", lineage=lineages, segment=segments, resolution=resolutions),
-        genomes_done = expand("results/done_{lineage}_{resolution}.txt", lineage=lineages, resolution=resolutions)
+        genomes_done = expand("results/genomes_{lineage}_cluster{cluster}_{resolution}.fasta", lineage=lineages, resolution=resolutions, cluster = 0)
 
 rule files:
     params:
@@ -451,13 +451,13 @@ rule clustering:
             --output {output.node_data}
         """
 
-checkpoint clusters_fasta:
+rule clusters_fasta:
     message: "Creating directory of fasta files of full-genome clusters. Outputs as results/clusters/lineage/cluster.fasta"
     input: 
         clusters = rules.clustering.output.node_data,
         nt_muts = rules.clustering.input.nt_muts
     output:
-        done = directory("results/clusters/{lineage}_{resolution}/")
+        genomes = "results/genomes_{lineage}_cluster{cluster}_{resolution}.fasta"
     shell:
         """
         python3 scripts/genomes_cluster.py \
@@ -465,32 +465,6 @@ checkpoint clusters_fasta:
             --nt-muts {input.nt_muts} \
             --lineage {wildcards.lineage} \
             --resolution {wildcards.resolution} 
-        """
-
-rule format_genomes_clusters:
-    message: "Puts cluster results in the correct location."
-    input:
-        fastas = "results/clustering/{lineage}_{resolution}/{cluster}.fasta"
-    output:
-        genomes = "results/genomes_{lineage}_{resolution}_cluster{cluster}.fasta"
-    shell:
-        """
-        cp {input.fastas} > {output.genomes}
-        """
-
-def fasta_done_input(wildcards):
-    checkpoint_output = checkpoints.clusters_fasta.get(**wildcards).output.done
-    return expand("results/genomes_{lineage}_{resolution}_cluster{cluster}.fasta", lineage=wildcards.lineage, resolution=wildcards.resolution, cluster=glob_wildcards(os.path.join(checkpoint_output, "{cluster}.fasta")).cluster) 
-
-rule clusters_done:
-    message: "Clusters are finished."
-    input: 
-        fasta_done_input
-    output:
-        genomes_done = "results/done_{lineage}_{resolution}.txt"
-    shell: 
-        """
-        cat {input} > {output.genomes_done}
         """
 
 # def _get_trees_for_all_segments(wildcards):
