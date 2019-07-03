@@ -1,7 +1,7 @@
 from datetime import date
 from treetime.utils import numeric_date
 
-path_to_fauna = '../../fauna'
+path_to_fauna = '../fauna'
 if os.environ.get('FAUNA_PATH'):
     path_to_fauna = os.environ.get('FAUNA_PATH')
 
@@ -39,7 +39,6 @@ def clock_rate(w):
         ('yam', 'ha'): 0.0019, ('yam', 'na'): 0.0013
     }
     return rate[(w.lineage, w.segment)]
-
 
 #
 # Define clades functions
@@ -460,7 +459,7 @@ rule clusters_fasta:
         genomes = "results/genomes_{lineage}_cluster{cluster}_{resolution}.fasta"
     shell:
         """
-        python3 scripts/genomes_cluster.py \
+        python3 scripts/extract_cluster_fastas.py \
             --clusters {input.clusters} \
             --nt-muts {input.nt_muts} \
             --lineage {wildcards.lineage} \
