@@ -18,7 +18,6 @@ environment*
 
 # Local config overrides
 /config_local.yaml
-/config/cluster-gizmo.json
 
 # For Python #
 ##############
