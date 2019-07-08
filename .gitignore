@@ -4,7 +4,12 @@ data/
 metadata/
 results/
 auspice/
-auspice-who/
+segments-data/
+segments-results/
+segments-auspice/
+clusters-data/
+clusters-results/
+clusters-auspice/
 build/
 logs/
 figures/
