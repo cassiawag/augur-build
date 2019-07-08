@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--clusters', type = str, required = True, help = "cluster JSON files")
     parser.add_argument('--nt-muts', nargs = '+', type = str, required = True, help = "list of nt-muts JSON files")
-    parser.add_argument('--min-size', type = int, default = 2, help "Minimum number of strains in cluster. Default is 2.")
+    parser.add_argument('--min-size', type = int, default = 2, help = "Minimum number of strains in cluster. Default is 2.")
     parser.add_argument('--output', type = str, required = True, help = "output location")
     args = parser.parse_args()
 
