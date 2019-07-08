@@ -7,7 +7,7 @@ import argparse
 '''
 Load clusters into usable python dictionary
 '''
-def clusters(file):
+def clusters(file, min_size):
     diction = {}
     with open(file) as jfile:
         json_data = json.load(jfile)
@@ -17,6 +17,10 @@ def clusters(file):
                 diction[cluster_number][strain] = []
             else:
                 diction[cluster_number] = {strain : []}
+    dict_scan = dict(diction)
+    for cluster_id, cluster_strains in dict_scan.items():
+        if len(cluster_strains) < min_size:
+            del diction[cluster_id]
     return diction
 
 
@@ -57,11 +61,12 @@ if __name__ == '__main__':
 
     parser.add_argument('--clusters', type = str, required = True, help = "cluster JSON files")
     parser.add_argument('--nt-muts', nargs = '+', type = str, required = True, help = "list of nt-muts JSON files")
+    parser.add_argument('--min-size', type = int, default = 2, help "Minimum number of strains in cluster. Default is 2.")
     parser.add_argument('--output', type = str, required = True, help = "output location")
     args = parser.parse_args()
 
     # Create clusters dictionary
-    cluster_dict = clusters(args.clusters)
+    cluster_dict = clusters(args.clusters, args.min_size)
 
     # Makes sequences dictionary
     cluster_seq_dict = sequences(cluster_dict, args.nt_muts)

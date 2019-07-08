@@ -455,6 +455,8 @@ rule clusters_fasta:
     input:
         clusters = rules.clustering.output.node_data,
         nt_muts = rules.clustering.input.nt_muts
+    params:
+        min_size = 2
     output:
         genomes = "clusters-data/{lineage}_{resolution}_cluster0.fasta"
     shell:
@@ -462,6 +464,7 @@ rule clusters_fasta:
         python3 scripts/extract_cluster_fastas.py \
             --clusters {input.clusters} \
             --nt-muts {input.nt_muts} \
+            --min-size {params.min_size} \
             --output {output.genomes}
         """
 
