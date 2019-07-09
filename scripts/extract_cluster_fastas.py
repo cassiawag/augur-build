@@ -1,6 +1,7 @@
 '''
 Creates full-genome fasta files for each clusters.
 '''
+import os
 import json
 import argparse
 
@@ -45,24 +46,26 @@ def sequences(clusters, files):
 '''
 Outputs python dictionary sequences into fasta files
 '''
-def genomes(seq_dict, output):
+def export_genomes(seq_dict, output_dir):
     for cluster, cluster_strains in seq_dict.items():
-        new_output = output.replace('0', cluster)
-        with open (new_output, "w") as fasta:
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+        filename = output_dir + '/cluster' + str(cluster) + '.fasta'
+        with open (filename, "w") as fasta:
             for strain, seq in cluster_strains.items():
                 fasta.write('>' + strain + '\n' + seq + '\n')
     return fasta
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description="Create full-genome fasta files of clusters",
+        description="Create full-genome fasta files of clusters, output one FASTA per cluster",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
 
     parser.add_argument('--clusters', type = str, required = True, help = "cluster JSON files")
     parser.add_argument('--nt-muts', nargs = '+', type = str, required = True, help = "list of nt-muts JSON files")
     parser.add_argument('--min-size', type = int, default = 2, help = "Minimum number of strains in cluster. Default is 2.")
-    parser.add_argument('--output', type = str, required = True, help = "output location")
+    parser.add_argument('--output-dir', type = str, required = True, help = "output directory")
     args = parser.parse_args()
 
     # Create clusters dictionary
@@ -72,4 +75,4 @@ if __name__ == '__main__':
     cluster_seq_dict = sequences(cluster_dict, args.nt_muts)
 
     # Outputs fasta files
-    genomes(cluster_seq_dict, args.output)
+    export_genomes(cluster_seq_dict, args.output_dir)

@@ -8,6 +8,7 @@ build/
 logs/
 figures/
 targets/
+aggregated/
 
 # Sensitive environment variables
 environment*

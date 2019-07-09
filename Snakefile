@@ -57,7 +57,7 @@ rule all:
     input:
         auspice_tree = expand("auspice/seattle_flu_seasonal_{lineage}_{segment}_{resolution}_tree.json", lineage=lineages, segment=segments, resolution=resolutions),
         auspice_meta = expand("auspice/seattle_flu_seasonal_{lineage}_{segment}_{resolution}_meta.json", lineage=lineages, segment=segments, resolution=resolutions),
-        clusters_fastas = expand("results/clusters_fastas/{lineage}_genome_{resolution}_cluster0.fasta", lineage=lineages, resolution=resolutions)
+        aggregated = expand("aggregated/{lineage}_{resolution}.txt", lineage=lineages, resolution=resolutions)
 
 rule files:
     params:
@@ -450,24 +450,6 @@ rule clustering:
             --output {output.node_data}
         """
 
-rule clusters_fasta:
-    message: "Creating directory of fasta files of full-genome clusters."
-    input:
-        clusters = rules.clustering.output.node_data,
-        nt_muts = rules.clustering.input.nt_muts
-    params:
-        min_size = 2
-    output:
-        genomes = "results/clusters_fastas/{lineage}_genome_{resolution}_cluster0.fasta"
-    shell:
-        """
-        python3 scripts/extract_cluster_fastas.py \
-            --clusters {input.clusters} \
-            --nt-muts {input.nt_muts} \
-            --min-size {params.min_size} \
-            --output {output.genomes}
-        """
-
 # def _get_trees_for_all_segments(wildcards):
 #     trees = []
 #     for seg in segments:
@@ -531,6 +513,91 @@ rule export:
             --output-tree {output.auspice_tree} \
             --output-meta {output.auspice_meta}
         """
+
+checkpoint clusters_fasta:
+    message: "Creating directory of fasta files of full-genome clusters."
+    input:
+        clusters = rules.clustering.output.node_data,
+        nt_muts = expand("results/nt-muts_{{lineage}}_{segment}_{{resolution}}.json", segment=segments)
+    params:
+        min_size = 2
+    output:
+        dir = directory("results/clusters/pre_{lineage}_genome_{resolution}")
+    shell:
+        """
+        python3 scripts/extract_cluster_fastas.py \
+            --clusters {input.clusters} \
+            --nt-muts {input.nt_muts} \
+            --min-size {params.min_size} \
+            --output-dir {output.dir}
+        """
+
+rule clusters_intermediate:
+    input:
+        "results/clusters/pre_{lineage}_genome_{resolution}/{cluster}.fasta"
+    output:
+        "results/clusters/aligned_{lineage}_genome_{resolution}/{cluster}.fasta"
+    shell:
+        "cp {input} {output}"
+
+rule tree_clusters:
+    message: "Building tree for each cluster"
+    input:
+        alignment = rules.clusters_intermediate.output
+    output:
+        tree = "results/clusters/tree-raw_{lineage}_genome_{resolution}/{cluster}.nwk"
+    shell:
+        """
+        augur tree \
+            --alignment {input.alignment} \
+            --output {output.tree} \
+            --nthreads 1
+        """
+
+rule refine_clusters:
+    message:
+        """
+        Refining tree
+        """
+    input:
+        tree = rules.tree_clusters.output.tree,
+        alignment = rules.clusters_intermediate.output,
+        metadata = "data/metadata_{lineage}_ha.tsv"
+    output:
+        tree = "results/clusters/tree_{lineage}_genome_{resolution}/{cluster}.nwk",
+        node_data = "results/clusters/branch-lengths_{lineage}_genome_{resolution}/{cluster}.json"
+    params:
+        coalescent = "const",
+        date_inference = "marginal"
+    shell:
+        """
+        augur refine \
+            --tree {input.tree} \
+            --alignment {input.alignment} \
+            --metadata {input.metadata} \
+            --output-tree {output.tree} \
+            --output-node-data {output.node_data} \
+            --timetree \
+            --coalescent {params.coalescent} \
+            --date-confidence \
+            --date-inference {params.date_inference}
+        """
+
+def aggregate_input(wildcards):
+    checkpoint_output = checkpoints.clusters_fasta.get(**wildcards).output[0]
+    return expand("results/clusters/tree_{lineage}_genome_{resolution}/{cluster}.nwk",
+           lineage=wildcards.lineage,
+           resolution=wildcards.resolution,
+           cluster=glob_wildcards(os.path.join(checkpoint_output, "{cluster}.fasta")).cluster)
+
+# an aggregation over all produced clusters
+rule clusters_aggregate:
+    input:
+        aggregate_input
+    output:
+        "aggregated/{lineage}_{resolution}.txt"
+    shell:
+        "cat {input} > {output}"
 
 rule clean:
     message: "Removing directories: {params}"
