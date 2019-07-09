@@ -57,8 +57,7 @@ rule all:
     input:
         auspice_tree = expand("auspice/seattle_flu_seasonal_{lineage}_{segment}_{resolution}_tree.json", lineage=lineages, segment=segments, resolution=resolutions),
         auspice_meta = expand("auspice/seattle_flu_seasonal_{lineage}_{segment}_{resolution}_meta.json", lineage=lineages, segment=segments, resolution=resolutions),
-        clusters_fastas = expand("results/clusters_fastas/{lineage}_genome_{resolution}_cluster0.fasta", lineage=lineages, resolution=resolutions),
-        reference_genome = expand("config/reference_{lineage}.gb", lineage=lineages)
+        clusters_fastas = expand("results/clusters_fastas/{lineage}_genome_{resolution}_cluster0.fasta", lineage=lineages, resolution=resolutions)
 
 rule files:
     params:
@@ -474,7 +473,7 @@ rule reference_genomes:
     input:
         references = expand("config/reference_{{lineage}}_{segment}.gb", segment=segments)
     output:
-        ref_genome = "config/reference_{lineage}.gb"
+        ref_genome = "config/reference_{lineage}_genome.gb"
     shell:
         """
         python3 scripts/create_ref_genome.py \
