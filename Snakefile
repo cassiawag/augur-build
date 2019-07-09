@@ -57,7 +57,8 @@ rule all:
     input:
         auspice_tree = expand("auspice/seattle_flu_seasonal_{lineage}_{segment}_{resolution}_tree.json", lineage=lineages, segment=segments, resolution=resolutions),
         auspice_meta = expand("auspice/seattle_flu_seasonal_{lineage}_{segment}_{resolution}_meta.json", lineage=lineages, segment=segments, resolution=resolutions),
-        clusters_fastas = expand("results/clusters_fastas/{lineage}_genome_{resolution}_cluster0.fasta", lineage=lineages, resolution=resolutions)
+        clusters_fastas = expand("results/clusters_fastas/{lineage}_genome_{resolution}_cluster0.fasta", lineage=lineages, resolution=resolutions),
+        reference_genome = expand("config/reference_{lineage}.gb", lineage=lineages)
 
 rule files:
     params:
@@ -466,6 +467,19 @@ rule clusters_fasta:
             --nt-muts {input.nt_muts} \
             --min-size {params.min_size} \
             --output {output.genomes}
+        """
+
+rule reference_genomes:
+    message: "Creating full-genome reference genbank file."
+    input:
+        references = expand("config/reference_{{lineage}}_{segment}.gb", segment=segments)
+    output:
+        ref_genome = "config/reference_{lineage}.gb"
+    shell:
+        """
+        python3 scripts/create_ref_genome.py \
+            --references {input.references} \
+            --output {output.ref_genome}
         """
 
 # def _get_trees_for_all_segments(wildcards):
