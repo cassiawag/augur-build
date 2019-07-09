@@ -50,7 +50,7 @@ def genomes(seq_dict, output):
         new_output = output.replace('0', cluster)
         with open (new_output, "w") as fasta:
             for strain, seq in cluster_strains.items():
-                fasta.write('>' + strain + ' | cluster'+cluster + '\n' + seq + '\n')
+                fasta.write('>' + strain + '\n' + seq + '\n')
     return fasta
 
 if __name__ == '__main__':
