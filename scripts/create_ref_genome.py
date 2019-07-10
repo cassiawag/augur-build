@@ -28,4 +28,3 @@ if __name__ == '__main__':
 
 #Writes out reference genbank file for full influenza genome     
 SeqIO.write(concat(args.references), args.output, 'gb')
-© 2019 GitHub, Inc.
