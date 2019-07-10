@@ -519,6 +519,7 @@ checkpoint clusters_fasta:
     input:
         clusters = rules.clustering.output.node_data,
         nt_muts = expand("results/nt-muts_{{lineage}}_{segment}_{{resolution}}.json", segment=segments)
+        metadata = expand(metadata = "data/background_metadata_{lineage}_{segment}.tsv", segment = segments)
     params:
         min_size = 2
     output:
@@ -528,6 +529,7 @@ checkpoint clusters_fasta:
         python3 scripts/extract_cluster_fastas.py \
             --clusters {input.clusters} \
             --nt-muts {input.nt_muts} \
+            --metadata {input.metadata} \
             --min-size {params.min_size} \
             --output-dir {output.dir}
         """
