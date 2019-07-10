@@ -585,10 +585,13 @@ rule aggregate_cluster_trees:
         trees = aggregate_input
     output:
         tree = "results/aggregated/tree-raw_{lineage}_genome_{resolution}.nwk"
+    params:
+        outgroup = reference_strain
     shell:
         """
         python3 scripts/merge_trees.py \
             --trees {input.trees} \
+            --outgroup {params.outgroup} \
             --output {output.tree}
         """
 
