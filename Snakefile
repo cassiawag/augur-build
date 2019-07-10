@@ -333,23 +333,6 @@ rule translate:
             --output {output.node_data} \
         """
 
-rule reconstruct_translations:
-    message: "Reconstructing translations required for titer models and frequencies"
-    input:
-        tree = rules.refine.output.tree,
-        node_data = "results/aa-muts_{lineage}_{segment}_{resolution}.json",
-    output:
-        aa_alignment = "results/aa-seq_{lineage}_{segment}_{resolution}_{gene}.fasta"
-    shell:
-        """
-        augur reconstruct-sequences \
-            --tree {input.tree} \
-            --mutations {input.node_data} \
-            --gene {wildcards.gene} \
-            --output {output.aa_alignment} \
-            --internal-nodes
-        """
-
 rule traits:
     message:
         """
@@ -450,24 +433,6 @@ rule clustering:
             --output {output.node_data}
         """
 
-# def _get_trees_for_all_segments(wildcards):
-#     trees = []
-#     for seg in segments:
-#         trees.append(rules.refine.output.tree.format(**wildcards, **{"segment": seg}))
-#     return trees
-#
-# rule identify_non_reassorting_tips:
-#     message: "Identifying sets of tips which have not reassorted"
-#     input:
-#         trees = _get_trees_for_all_segments,
-#         mutations = lambda wildcards: [rules.ancestral.output.node_data.format(**wildcards, **{"segment": seg}) for seg in segments]
-#     output:
-#         data = "results/reassort_{lineage}_{resolution}.json"
-#     shell:
-#         """
-#         python3 scripts/reassort --trees {input.trees} --mutations {input.mutations} --output {output.data}
-#         """
-
 def _get_node_data_for_export(wildcards):
     """Return a list of node data files to include for a given build's wildcards.
     """
@@ -481,10 +446,6 @@ def _get_node_data_for_export(wildcards):
         rules.lbi.output.node_data,
         rules.clustering.output.node_data
     ]
-
-    # HA gets the reassortant information
-    # if wildcards["segment"] == "ha":
-    #     inputs.append(rules.identify_non_reassorting_tips.output.data)
 
     # Convert input files from wildcard strings to real file names.
     inputs = [input_file.format(**wildcards) for input_file in inputs]
