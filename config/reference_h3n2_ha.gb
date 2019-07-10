@@ -1,88 +1,100 @@
-LOCUS       A/Beijing/32/1992               1701 bp    DNA              VRL 02-MAY-2006
-DEFINITION  Influenza A virus (A/Beijing/32/1992(H3N2)) hemagglutinin gene,
-            complete cds.
-ACCESSION   U26830
-VERSION     U26830.1  GI:857407
+LOCUS       KJ609206                1727 bp    cRNA    linear   VRL 25-MAR-2015
+DEFINITION  Influenza A virus (A/Perth/16/2009(H3N2)) segment 4 hemagglutinin
+            (HA) gene, complete cds.
+ACCESSION   KJ609206
+VERSION     KJ609206.1
 KEYWORDS    .
-SOURCE      Influenza A virus (A/Beijing/32/1992(H3N2))
-  ORGANISM  Influenza A virus (A/Beijing/32/1992(H3N2))
+SOURCE      Influenza A virus (A/Perth/16/2009(H3N2))
+  ORGANISM  Influenza A virus (A/Perth/16/2009(H3N2))
             Viruses; ssRNA viruses; ssRNA negative-strand viruses;
             Orthomyxoviridae; Influenzavirus A.
-REFERENCE   1  (bases 1 to 1701)
-  AUTHORS   Muster,T., Ferko,B., Klima,A., Purtscher,M., Trkola,A., Schulz,P.,
-            Grassauer,A., Engelhardt,O.G., Garcia-Sastre,A., Palese,P. and
-            Katinger,H.
-  TITLE     Mucosal model of immunization against human immunodeficiency virus
-            type 1 with a chimeric influenza virus
-  JOURNAL   J. Virol. 69 (11), 6678-6686 (1995)
-   PUBMED   7474077
-REFERENCE   2  (bases 1 to 1701)
-  AUTHORS   Muster,T. and Klima,A.
+REFERENCE   1  (bases 1 to 1727)
+  AUTHORS   Oler,A.J. and Fabozzi,G.
+  TITLE     Innate immune response of BEAS-2B to influenza A (H3N2) viruses
+  JOURNAL   Unpublished
+REFERENCE   2  (bases 1 to 1727)
+  AUTHORS   Oler,A.J. and Fabozzi,G.
   TITLE     Direct Submission
-  JOURNAL   Submitted (11-MAY-1995) Thomas Muster, Institute of Applied
-            Microbiology, Nussdorfer Laende 11, Vienna, A-1190, Austria
+  JOURNAL   Submitted (14-MAR-2014) Office of Cyber Infrastructure and
+            Computational Biology, National Institute of Allergy and Infectious
+            Diseases, 31 Center Drive, Room 3B62, Bethesda, MD 20892, USA
+COMMENT     GenBank Accession Numbers KJ609203-KJ609210 represent sequences
+            from the 8 segments of Influenza A virus (A/Perth/16/2009(H3N2)).
+            
+            ##Assembly-Data-START##
+            Assembly Method       :: SOAPdenovo2-bin-LINUX-generic-r240
+            Coverage              :: 3903
+            Sequencing Technology :: Illumina
+            ##Assembly-Data-END##
 FEATURES             Location/Qualifiers
-     source          1..1701
-                     /mol_type="genomic RNA"
-                     /lab_host="MDBK cells"
-                     /db_xref="taxon:380950"
+     source          1..1727
+                     /organism="Influenza A virus (A/Perth/16/2009(H3N2))"
+                     /mol_type="viral cRNA"
+                     /strain="A/Perth/16/2009"
                      /serotype="H3N2"
-                     /strain="A/Beijing/32/1992"
                      /host="Homo sapiens"
-                     /organism="Influenza A virus (A/Beijing/32/1992(H3N2))"
-     CDS             1..1701
-                     /db_xref="GI:857408"
-                     /product="hemagglutinin"
+                     /db_xref="taxon:654811"
+                     /segment="4"
+                     /country="Australia"
+                     /collection_date="07-Apr-2009"
+                     /note="passage details: E6, BEAS-2B 1"
+     misc_feature    1..1727
+                     /db_xref="IRD:IRD-Perth.4"
+     gene            9..1709
+                     /gene="HA"
+     CDS             9..1709
+                     /gene="HA"
+                     /function="receptor binding and fusion protein"
                      /codon_start=1
-                     /translation="MKTIIALSYILCLVFAQKLPGNDNSTATLCLGHHAVPNGTLVKTI
-                     TNDQIEVTNATELVQSSSTGRICDSPHRILDGKNCTLIDALLGDPHCDGFQNKEWDLFV
-                     ERSKAYSNCYPYDVPDYASLRSLVASSGTLEFINEDFNWTGVAQDGGSYACKRGSVNSF
-                     FSRLNWLHKSEYKYPALNVTMPNNGKFDKLYIWGVHHPSTDRDQTSLYVRASGRVTVST
-                     KRSQQTVTPNIGSRPWVRGQSSRISIYWTIVKPGDILLINSTGNLIAPRGYFKIRNGKS
-                     SIMRSDAPIGTCSSECITPNGSIPNDKPFQNVNRITYGACPRYVKQNTLKLATGMRNVP
-                     EKQTRGIFGAIAGFIENGWEGMVDGWYGFRHQNSEGTGQAADLKSTQAAIDQINGKLNR
-                     LIEKTNEKFHQIEKEFSEVEGRIQDLEKYVEDTKIDLWSYNAELLVALENQHTIDLTDS
-                     EMNKLFEKTRKQLRENAEDMGNGCFKIYHKCDNACIGSIRNGTYDHDVYRDEALNNRFQ
-                     IKGVELKSGYKDWILWISFAISCFLLCVVLLGFIMWACQKGNIRCNICI"
-                     /protein_id="AAA87553.1"
-     CDS             1..48
-                     /product="Signal peptide"
-                     /gene="SigPep"
-     CDS             49..1035
-                     /product="HA1 protein"
-                     /gene="HA1"
-     CDS             1036..1698
-                     /product="HA2 protein"
-                     /gene="HA2"
-
-ORIGIN
-        1 atgaagacta tcattgcttt gagctacatt ttatgtctgg ttttcgctca aaaacttccc
-       61 ggaaatgaca acagcacagc aacgctgtgc ctgggacatc atgcagtgcc aaacggaacg
-      121 ctagtgaaaa caatcacgaa tgatcaaatt gaagtgacta atgctactga gctggttcag
-      181 agttcctcaa caggtagaat atgcgacagt cctcaccgaa tccttgatgg aaaaaactgc
-      241 acactgatag atgctctatt gggagaccct cattgtgatg gcttccaaaa taaggaatgg
-      301 gacctttttg ttgaacgcag caaagcttac agcaactgtt acccttatga tgtaccggat
-      361 tatgcctccc ttaggtcact agttgcctca tcaggcaccc tggagtttat caatgaagac
-      421 ttcaattgga ctggagtcgc tcaggatggg ggaagctatg cttgcaaaag gggatctgtt
-      481 aacagtttct ttagtagatt gaattggttg cacaaatcag aatacaaata tccagcgctg
-      541 aacgtgacta tgccaaacaa tggcaaattt gacaaattgt acatttgggg ggttcaccac
-      601 ccgagcacgg acagagacca aaccagccta tatgttcgag catcagggag agtcacagtc
-      661 tctaccaaaa gaagccaaca aactgtaacc ccgaatatcg ggtctagacc ctgggtaagg
-      721 ggtcagtcca gtagaataag catctattgg acaatagtaa aaccgggaga catacttttg
-      781 attaatagca cagggaatct aattgctcct cggggttact tcaaaatacg aaatgggaaa
-      841 agctcaataa tgaggtcaga tgcacccatt ggcacctgca gttctgaatg catcactcca
-      901 aatggaagca ttcccaatga caaacctttt caaaatgtaa acaggatcac atatggggcc
-      961 tgccccagat atgttaagca aaacactctg aaattggcaa cagggatgcg gaatgtacca
-     1021 gagaaacaaa ctagaggcat attcggcgca atcgcaggtt tcatagaaaa tggttgggag
-     1081 ggaatggtag acggttggta cggtttcagg catcaaaatt ctgagggcac aggacaagca
-     1141 gcagatctta aaagcactca agcagcaatc gaccaaatca acgggaaact gaataggtta
-     1201 atcgagaaaa cgaacgagaa attccatcaa atcgaaaaag aattctcaga agtagaaggg
-     1261 agaattcagg acctcgagaa atatgttgaa gacactaaaa tagatctctg gtcttacaac
-     1321 gcggagcttc ttgttgccct ggagaaccaa catacaattg atcttactga ctcagaaatg
-     1381 aacaaactgt ttgaaaaaac aaggaagcaa ctgagggaaa atgctgagga catgggcaat
-     1441 ggttgcttca aaatatacca caaatgtgac aatgcctgca tagggtcaat cagaaatgga
-     1501 acttatgacc atgatgtata cagagacgaa gcattaaaca accggttcca gatcaaaggt
-     1561 gttgagctga agtcaggata caaagattgg atcctgtgga tttcctttgc catatcatgc
-     1621 tttttgcttt gtgttgtttt gctggggttc atcatgtggg cctgccaaaa aggcaacatt
-     1681 aggtgtaaca tttgcatttg a
+                     /product="hemagglutinin"
+                     /protein_id="AHX37629.1"
+                     /translation="MKTIIALSYILCLVFAQKLPGNDNSTATLCLGHHAVPNGTIVKT
+                     ITNDQIEVTNATELVQSSSTGEICDSPHQILDGKNCTLIDALLGDPQCDGFQNKKWDL
+                     FVERSKAYSNCYPYDVPDYASLRSLVASSGTLEFNNESFNWTGVTQNGTSSACIRRSK
+                     NSFFSRLNWLTHLNFKYPALNVTMPNNEQFDKLYIWGVLHPGTDKDQIFLYAQASGRI
+                     TVSTKRSQQTVSPNIGSRPRVRNIPSRISIYWTIVKPGDILLINSTGNLIAPRGYFKI
+                     RSGKSSIMRSDAPIGKCNSECITPNGSIPNDKPFQNVNRITYGACPRYVKQNTLKLAT
+                     GMRNVPEKQTRGIFGAIAGFIENGWEGMVDGWYGFRHQNSEGRGQAADLKSTQAAIDQ
+                     INGKLNRLIGKTNEKFHQIEKEFSEVEGRIQDLEKYVEDTKIDLWSYNAELLVALENQ
+                     HTIDLTDSEMNKLFEKTKKQLRENAEDMGNGCFKIYHKCDNACIGSIRNGTYDHDVYR
+                     DEALNNRFQIKGVELKSGYKDWILWISFAISCFLLCVALLGFIMWACQKGNIRCNICI
+                     "
+     sig_peptide     9..56
+                     /gene="HA"
+     mat_peptide     57..1043
+                     /gene="HA"
+                     /product="HA1"
+     mat_peptide     1044..1706
+                     /gene="HA"
+                     /product="HA2"
+ORIGIN      
+        1 tattaaccat gaagactatc attgctttga gctacattct atgtctggtt ttcgctcaaa
+       61 aacttcctgg aaatgacaac agcacggcaa cgctgtgcct tgggcaccat gcagtaccaa
+      121 acggaacgat agtgaaaaca atcacgaatg accaaattga agttactaat gctactgagc
+      181 tggttcagag ttcctcaaca ggtgaaatat gcgacagtcc tcatcagatc cttgatggaa
+      241 aaaactgcac actaatagat gctctattgg gagaccctca gtgtgatggc ttccaaaata
+      301 agaaatggga cctttttgtt gaacgcagca aagcctacag caactgttac ccttatgatg
+      361 tgccggatta tgcctccctt aggtcactag ttgcctcatc cggcacactg gagtttaaca
+      421 atgaaagctt caattggact ggagtcactc aaaacggaac aagctctgct tgcataagga
+      481 gatctaaaaa cagtttcttt agtagattga attggttgac ccacttaaac ttcaaatacc
+      541 cagcattgaa cgtgactatg ccaaacaatg aacaatttga caaattgtac atttgggggg
+      601 ttctccaccc gggtacggac aaagaccaaa tcttcctgta tgctcaagca tcaggaagaa
+      661 tcacagtctc taccaaaaga agccaacaaa ccgtaagccc gaatatcgga tctagaccca
+      721 gagtaaggaa tatccctagc agaataagca tctattggac aatagtaaaa ccgggagaca
+      781 tacttttgat taacagcaca gggaatctaa ttgctcctag gggttacttc aaaatacgaa
+      841 gtgggaaaag ctcaataatg agatcagatg cacccattgg caaatgcaat tctgaatgca
+      901 tcactccaaa tggaagcatt cccaatgaca aaccattcca aaatgtaaac aggatcacat
+      961 acggggcctg tcccagatat gttaagcaaa acactctgaa attggcaaca gggatgcgaa
+     1021 atgtaccaga gaaacaaact agaggcatat ttggcgcaat cgcgggtttc atagaaaatg
+     1081 gttgggaggg aatggtggat ggttggtacg gtttcaggca tcaaaattct gagggaagag
+     1141 gacaagcagc agatctcaaa agcactcaag cagcaatcga tcaaatcaat gggaagctga
+     1201 atagattgat cgggaaaacc aacgagaaat tccatcagat tgaaaaagaa ttctcagaag
+     1261 tcgaagggag aattcaggac cttgagaaat atgttgagga cactaaaata gatctctggt
+     1321 catacaacgc ggagcttctt gttgccctgg agaaccaaca tacaattgat ctaactgact
+     1381 cagaaatgaa caaactgttt gaaaaaacaa agaagcaact gagggaaaat gctgaggata
+     1441 tgggcaatgg ttgtttcaaa atataccaca aatgtgacaa tgcctgcata ggatcaatca
+     1501 gaaatggaac ttatgaccac gatgtataca gagatgaagc attaaacaac cggtttcaga
+     1561 tcaagggagt tgagctgaag tcagggtaca aagattggat cctatggatt tcctttgcca
+     1621 tatcatgttt tttgctttgt gttgctttgt tggggttcat catgtgggcc tgccaaaaag
+     1681 gcaacattag gtgcaacatt tgcatttgag tgcattaatt aaaaaca
 //

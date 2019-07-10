@@ -1,103 +1,114 @@
-LOCUS       CY113682                2192 bp    DNA              VRL 04-APR-2012
-DEFINITION  Influenza A virus (A/Beijing/32/1992(H3N2)) polymerase PA (PA) gene,
-            complete cds.
-ACCESSION   CY113682
-VERSION     CY113682.1
+LOCUS       KJ609205                2168 bp    cRNA    linear   VRL 25-MAR-2015
+DEFINITION  Influenza A virus (A/Perth/16/2009(H3N2)) segment 3 polymerase PA
+            (PA) and PA-X protein (PA-X) genes, complete cds.
+ACCESSION   KJ609205
+VERSION     KJ609205.1
 KEYWORDS    .
-SOURCE      Influenza A virus (A/Beijing/32/1992(H3N2))
-  ORGANISM  Influenza A virus (A/Beijing/32/1992(H3N2))
+SOURCE      Influenza A virus (A/Perth/16/2009(H3N2))
+  ORGANISM  Influenza A virus (A/Perth/16/2009(H3N2))
             Viruses; ssRNA viruses; ssRNA negative-strand viruses;
             Orthomyxoviridae; Influenzavirus A.
-REFERENCE   1  (bases 1 to 2192)
-  AUTHORS   Wentworth,D.E., Dugan,V., Halpin,R., Lin,X., Bera,J., Ghedin,E.,
-            Fedorova,N., Overton,L., Tsitrin,T., Stockwell,T., Amedeo,P.,
-            Bishop,B., Chen,H., Edworthy,P., Gupta,N., Katzel,D., Li,K.,
-            Schobel,S., Shrivastava,S., Thovarai,V., Wang,S., Westgeest,K.B.,
-            van Beek,R., Bestebroer,T.M., de Jong,J.C., Rimmelzwaan,G.F.,
-            Osterhaus,A.D.M.E., Fouchier,R.A.M., Bao,Y., Sanders,R.,
-            Dernovoy,D., Kiryutin,B., Lipman,D.J. and Tatusova,T.
-  TITLE     The NIAID Influenza Genome Sequencing Project
+REFERENCE   1  (bases 1 to 2168)
+  AUTHORS   Oler,A.J. and Fabozzi,G.
+  TITLE     Innate immune response of BEAS-2B to influenza A (H3N2) viruses
   JOURNAL   Unpublished
-REFERENCE   2  (bases 1 to 2192)
-  CONSRTM   The NIAID Influenza Genome Sequencing Consortium
+REFERENCE   2  (bases 1 to 2168)
+  AUTHORS   Oler,A.J. and Fabozzi,G.
   TITLE     Direct Submission
-  JOURNAL   Submitted (04-APR-2012) on behalf of JCVI/Erasmus Medical
-            College/NCBI, National Center for Biotechnology Information, NIH,
-            Bethesda, MD 20894, USA
-COMMENT     This work was supported by the National Institute of Allergy and
-            Infectious Diseases (NIAID), Genome Sequencing Centers for
-            Infectious Diseases (GSCID) program.
+  JOURNAL   Submitted (14-MAR-2014) Office of Cyber Infrastructure and
+            Computational Biology, National Institute of Allergy and Infectious
+            Diseases, 31 Center Drive, Room 3B62, Bethesda, MD 20892, USA
+COMMENT     GenBank Accession Numbers KJ609203-KJ609210 represent sequences
+            from the 8 segments of Influenza A virus (A/Perth/16/2009(H3N2)).
+            
+            ##Assembly-Data-START##
+            Assembly Method       :: SOAPdenovo2-bin-LINUX-generic-r240
+            Coverage              :: 2623
+            Sequencing Technology :: Illumina
+            ##Assembly-Data-END##
 FEATURES             Location/Qualifiers
-     source          1..2192
-                     /bio_material="CEIRS#CIP047BE3292#"
-                     /collection_date="1992"
-                     /country="China: Beijing"
-                     /db_xref="taxon:380950"
-                     /host="Homo sapiens"
-                     /lab_host="xtMK3 MDCK1 passage(s)"
+     source          1..2168
+                     /organism="Influenza A virus (A/Perth/16/2009(H3N2))"
                      /mol_type="viral cRNA"
-                     /organism="Influenza A virus (A/Beijing/32/1992(H3N2))"
-                     /segment="3"
+                     /strain="A/Perth/16/2009"
                      /serotype="H3N2"
-                     /strain="A/Beijing/32/1992"
-     misc_feature    1..2192
-                     /db_xref="IRD:NIGSP_CEIRS_CIP047_RFH3_00116.PA"
-     gene            11..2161
+                     /host="Homo sapiens"
+                     /db_xref="taxon:654811"
+                     /segment="3"
+                     /country="Australia"
+                     /collection_date="07-Apr-2009"
+                     /note="passage details: E6, BEAS-2B 1"
+     misc_feature    1..2168
+                     /db_xref="IRD:IRD-Perth.3"
+     gene            5..2155
                      /gene="PA"
-     CDS             11..2161
+     CDS             5..2155
+                     /gene="PA"
                      /codon_start=1
-                     /gene="PA"
                      /product="polymerase PA"
-                     /protein_id="AFG99684.1"
-                     /translation="MEDFVRQCFNPMIVELAEKAMKEYGEDLKIETNKFAAICTHLEVC
-                     FMYSDFHFINEQGESIVVELDDPNALLKHRFEIIEGRDRTMAWTVVNSICNTTGAEKPK
-                     FLPDLYDYKENRFIEIGVTRREVHIYYLEKANKIKSENTHIHIFSFTGEEMATKADYTL
-                     DEESRARIKTRLFTIRQEMANRGLWDSFRQSERGEETIEEKFEISGTMRRLADQSLPPN
-                     FSCLENFRAYVDGFEPNGCIEGKLSQMSKEVNAKIEPFLKTTPRPIKLPNGPPCYQRSK
-                     FLLMDALKLSIEDPSHEGEGIPLYDAIKCIRTFFGWKEPYIVKPHEKGINSNYLLSWKQ
-                     VLAELQDIETEEKIPRTKNMKKTSQLKWALGENMAPEKVDFDNCRDISDLKQYDSDEPE
-                     LRSLSSWIQNEFNKACELTDSIWIELDEIGEDVAPIEYIASMRRNYFTAEVSHCRATEY
-                     IMKGVYINTALLNASCAAMDDFQLIPMISKCRTKEGRRKTNLYGFIIKGRSHLRNDTDV
-                     VNFVSMEFSLTDPRLEPHKWEKYCVLEIGDMLLRSAIGQMSRPMFLYVRTNGTSKIKMK
-                     WGMEMRRCLLQSLQQIESMIEAESSVKEKDMTKEFFENKSEAWPIGESPKGVEEGSIGK
-                     VCRTLLAKSVFNSLYASPQLEGFSAESRKLLLVVQALRDNLEPGTFDLGGLYEAIEECL
-                     INDPWVLLNASWFNSFLTHALK"
-ORIGIN
-        1 ctgattcgaa atggaagatt ttgtgcgaca atgcttcaac ccgatgattg tcgaacttgc
-       61 agaaaaggca atgaaagagt atggagagga tctgaaaatc gaaacaaaca aatttgcagc
-      121 aatatgcact cacttggagg tatgtttcat gtattcagat tttcatttca tcaatgaaca
-      181 aggcgaatca atagtggtag aacttgatga tccaaatgca ctgttaaagc acagatttga
-      241 aataatagag gggagagaca gaacaatggc ctggacagta gtaaacagta tctgcaacac
-      301 tactggagct gagaaaccga agtttctgcc agatttgtat gattacaagg agaacagatt
-      361 catcgaaatt ggagtaacaa ggagagaagt ccacatatat taccttgaaa aggccaataa
-      421 aattaaatct gagaatacac acatccacat tttctcattc actggggagg aaatggccac
-      481 aaaggcagac tacactctcg acgaggaaag cagggctagg attaagacca ggctatttac
-      541 cataagacaa gaaatggcca acagaggcct ctgggattcc tttcgtcagt ccgaaagagg
-      601 cgaagaaaca attgaagaaa aatttgaaat ctcaggaact atgcgcaggc ttgccgacca
-      661 aagtctcccg ccgaacttct cctgccttga gaattttaga gcctatgtgg atggattcga
-      721 accgaacggc tgcattgagg gcaagctttc tcaaatgtcc aaagaagtga atgccaaaat
-      781 tgaacctttt ctgaagacaa caccaagacc aatcaaactt ccgaatggac ctccttgtta
-      841 tcagcggtcc aaattccttc tgatggatgc tttaaaatta agcattgaag acccaagtca
-      901 cgaaggagag gggataccac tatatgatgc gatcaagtgc ataagaacat tctttggatg
-      961 gaaagagccc tatatagtca aaccacacga aaagggaata aattcaaatt acctgctgtc
-     1021 atggaagcaa gtactggcag aattgcagga cattgaaact gaggagaaga ttccaagaac
-     1081 taaaaacatg aagaaaacga gtcaactaaa gtgggctctt ggtgaaaaca tggcaccaga
-     1141 gaaagtagac tttgacaact gcagagacat aagcgatttg aagcaatatg atagtgacga
-     1201 acctgaattg aggtcacttt caagctggat acagaatgaa ttcaacaagg catgcgagct
-     1261 gactgattca atctggatag agctcgatga aattggagaa gacgtggccc caattgagta
-     1321 cattgcaagc atgaggagaa attatttcac agcagaggtg tcccattgca gagccactga
-     1381 atacataatg aagggggtat acattaatac tgccttgctc aatgcatcct gtgcagcaat
-     1441 ggacgatttt caactaattc ccatgataag caagtgcaga actaaagagg gaaggcgaaa
-     1501 aaccaattta tatggattca tcataaaagg aagatctcac ttaaggaatg acacagatgt
-     1561 ggtaaacttt gtgagcatgg agttttctct cactgacccg aggcttgagc cacataaatg
-     1621 ggagaaatac tgtgtccttg agataggaga tatgttacta agaagtgcca taggccaaat
-     1681 gtcaaggcct atgttcttgt atgtgaggac aaatggaaca tcaaagatca aaatgaaatg
-     1741 gggaatggag atgagacgtt gcctccttca gtcactccag cagatcgaga gcatgattga
-     1801 agccgagtcc tcggttaaag agaaagacat gaccaaagag ttttttgaga ataaatcaga
-     1861 agcatggccc attggggagt cccccaaggg agtggaagaa ggttccattg ggaaagtctg
-     1921 taggactttg ttggctaagt cggtgttcaa tagcctgtat gcatctccac aattagaagg
-     1981 attttcagcg gagtcaagaa aactgctcct tgttgttcag gctcttaggg acaaccttga
-     2041 acctgggacc tttgatcttg gggggctata tgaagcaatt gaggagtgcc tgattaatga
-     2101 tccctgggtt ttgctcaatg cgtcttggtt caactccttc ctaacacatg cattaaaata
-     2161 gttatggcag tgctactatt tgttatccat ac
+                     /protein_id="AHX37627.1"
+                     /translation="MEDFVRQCFNPMIVELAEKAMKEYGEDLKIETNKFAAICTHLEV
+                     CFMYSDFHFINEQGESIVVELDDPNALLKHRFELIEGRDRTMAWTVVNSICNTTGAGK
+                     PKFLPDLYDYKENRFIEIGVTRREVHIYYLEKANKIKSENTHIHIFSFTGEEMATKAD
+                     YTLDEESRARIKTRLFTIRQEMANRGLWDSFRQSERGEETIEEKFEITGTMRRLADQS
+                     LPPNFSCLENFRAYVDGFEPNGCIEGKLSQMSKEVNAQIEPFLKTTPRPIKLPNGPPC
+                     YQRSKFLLMDALKLSIEDPSHEGEGIPLYDAIKCIKTFFGWKEPYIVKPHEKGINSNY
+                     LLSWKQVLSELQDIENEEKVPRTKNMKKTSQLKWALGENMAPEKVDFENCRDISDLKQ
+                     YDSDEPELRSLSSWIQNEFNKACELTDSVWIELDEIGEDVAPIEHIASMRRNYFTAEV
+                     SHCRATEYIMKGVYINTALLNASCAAMDDFQLIPMISKCRTKEGRRKTNLYGFIIKGR
+                     SHLRNDTDVVNFVSMEFSLTDPRLEPHKWEKYCVLEIGDMLLRSAIGQISRPMFLYVR
+                     TNGTSKVKMKWGMEMRRCLLQSLQQIESMIEAESSVKEKDMTKEFFENKSEAWPIGES
+                     PKGVEEGSIGKVCRTLLAKSVFNSLYASPQLEGFSAESRKLLLVVQALRDNLEPGTFD
+                     LGGLYEAIEECLINDPWVLLNASWFNSFLTHALK"
+     gene            5..764
+                     /gene="PA-X"
+     CDS             join(5..574,576..764)
+                     /gene="PA-X"
+                     /ribosomal_slippage
+                     /codon_start=1
+                     /product="PA-X protein"
+                     /protein_id="AHX37628.1"
+                     /translation="MEDFVRQCFNPMIVELAEKAMKEYGEDLKIETNKFAAICTHLEV
+                     CFMYSDFHFINEQGESIVVELDDPNALLKHRFELIEGRDRTMAWTVVNSICNTTGAGK
+                     PKFLPDLYDYKENRFIEIGVTRREVHIYYLEKANKIKSENTHIHIFSFTGEEMATKAD
+                     YTLDEESRARIKTRLFTIRQEMANRGLWDSFVSPKEAKKQLKKNLKSQELCVGLPTKV
+                     SHRTSPALRILEPMWMDSNRTAALRASFLKCPKK"
+ORIGIN      
+        1 cgaaatggaa gattttgtgc gacaatgctt caacccgatg attgtcgaac ttgcagaaaa
+       61 agcaatgaaa gagtatgggg aggatctgaa aattgaaaca aacaaatttg cagcaatatg
+      121 cactcacttg gaggtgtgtt tcatgtattc agatttccat ttcatcaatg aacaaggcga
+      181 atcaatagtg gtagaacttg acgatccaaa tgcactgtta aagcacagat ttgaactaat
+      241 cgaggggaga gacagaacaa tggcctggac agtagtaaac agtatctgca acactactgg
+      301 agctgggaaa ccgaagtttc taccagattt gtatgattac aaggagaaca gattcatcga
+      361 aattggggtg acaaggagag aagtccacat atattacctt gaaaaggcca ataagattaa
+      421 atctgagaac acacacattc acattttctc attcactgga gaggaaatgg ccacaaaggc
+      481 agactacact ctcgacgagg aaagcagggc taggattaag accaggctgt ttaccataag
+      541 acaagaaatg gccaacagag gcctatggga ttcctttcgt cagtccgaaa gaggcgaaga
+      601 aacaattgaa gaaaaatttg aaatcacagg aactatgcgt aggcttgccg accaaagtct
+      661 cccaccgaac ttctcctgcc ttgagaattt tagagcctat gtggatggat tcgaaccgaa
+      721 cggctgcatt gagggcaagc tttctcaaat gtccaaagaa gtgaatgccc aaattgaacc
+      781 ttttctgaag acaacaccaa gaccaatcaa acttccgaat ggacctcctt gttatcagcg
+      841 gtccaaattc ctcctgatgg atgctttaaa attgagcatt gaagacccaa gtcacgaagg
+      901 agaagggatc ccattatatg atgcgatcaa gtgcataaaa acattctttg gatggaaaga
+      961 accttatata gtcaaaccac acgaaaaggg aataaattca aattacctgc tgtcatggaa
+     1021 gcaagtactg tcagaattgc aggacattga aaatgaggag aaggttccaa ggactaaaaa
+     1081 catgaagaaa acgagtcaac ttaagtgggc tcttggtgaa aacatggcac cagagaaggt
+     1141 agactttgaa aactgcagag acataagcga tttgaagcaa tatgatagtg acgaacctga
+     1201 attaaggtca ctttcaagct ggatacagaa tgagttcaac aaggcctgtg agctaactga
+     1261 ttcagtctgg atagagctcg atgaaattgg agaggacgta gccccaattg agcacattgc
+     1321 aagcatgaga aggaattatt tcacagcaga ggtgtcccat tgtagagcca ctgaatacat
+     1381 aatgaagggg gtatacatta acactgccct gctcaatgca tcctgtgcag caatggacga
+     1441 ttttcaacta attcccatga taagcaagtg cagaactaaa gagggaaggc gaaaaaccaa
+     1501 tttatatgga ttcatcataa agggaagatc tcatttaagg aatgacacag acgtggtaaa
+     1561 ttttgtgagc atggagtttt ctctcactga cccgagactt gagccacata aatgggagaa
+     1621 atactgtgtc cttgagatag gagatatgtt actaagaagt gccataggcc aaatttcaag
+     1681 gccaatgttc ttatatgtga ggacaaacgg aacatcaaag gtcaaaatga aatggggaat
+     1741 ggagatgaga cgttgcctcc ttcagtcact ccagcagatc gagagcatga ttgaagccga
+     1801 gtcctcggtt aaagagaaag acatgaccaa agagtttttt gagaataaat cagaagcatg
+     1861 gcccattggg gagtccccca agggagtgga agaaggttcc attgggaaag tctgtaggac
+     1921 tctattggct aagtcagtat tcaatagcct gtatgcatca ccacaattgg aaggattttc
+     1981 agcggagtca agaaaactgc tccttgttgt tcaggctctt agggacaacc tcgaacctgg
+     2041 gacctttgat cttggggggc tatatgaagc aattgaggag tgcctgatta atgatccctg
+     2101 ggttttgctc aatgcgtctt ggttcaactc cttcctgaca catgcattaa aatagttatg
+     2161 gcagtgct
 //

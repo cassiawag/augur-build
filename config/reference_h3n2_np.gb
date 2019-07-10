@@ -1,88 +1,86 @@
-LOCUS       CY113680                1537 bp    DNA              VRL 04-APR-2012
-DEFINITION  Influenza A virus (A/Beijing/32/1992(H3N2)) nucleocapsid protein
-            (NP) gene, complete cds.
-ACCESSION   CY113680
-VERSION     CY113680.1
+LOCUS       KJ609207                1530 bp    cRNA    linear   VRL 25-MAR-2015
+DEFINITION  Influenza A virus (A/Perth/16/2009(H3N2)) segment 5 nucleocapsid
+            protein (NP) gene, complete cds.
+ACCESSION   KJ609207
+VERSION     KJ609207.1
 KEYWORDS    .
-SOURCE      Influenza A virus (A/Beijing/32/1992(H3N2))
-  ORGANISM  Influenza A virus (A/Beijing/32/1992(H3N2))
+SOURCE      Influenza A virus (A/Perth/16/2009(H3N2))
+  ORGANISM  Influenza A virus (A/Perth/16/2009(H3N2))
             Viruses; ssRNA viruses; ssRNA negative-strand viruses;
             Orthomyxoviridae; Influenzavirus A.
-REFERENCE   1  (bases 1 to 1537)
-  AUTHORS   Wentworth,D.E., Dugan,V., Halpin,R., Lin,X., Bera,J., Ghedin,E.,
-            Fedorova,N., Overton,L., Tsitrin,T., Stockwell,T., Amedeo,P.,
-            Bishop,B., Chen,H., Edworthy,P., Gupta,N., Katzel,D., Li,K.,
-            Schobel,S., Shrivastava,S., Thovarai,V., Wang,S., Westgeest,K.B.,
-            van Beek,R., Bestebroer,T.M., de Jong,J.C., Rimmelzwaan,G.F.,
-            Osterhaus,A.D.M.E., Fouchier,R.A.M., Bao,Y., Sanders,R.,
-            Dernovoy,D., Kiryutin,B., Lipman,D.J. and Tatusova,T.
-  TITLE     The NIAID Influenza Genome Sequencing Project
+REFERENCE   1  (bases 1 to 1530)
+  AUTHORS   Oler,A.J. and Fabozzi,G.
+  TITLE     Innate immune response of BEAS-2B to influenza A (H3N2) viruses
   JOURNAL   Unpublished
-REFERENCE   2  (bases 1 to 1537)
-  CONSRTM   The NIAID Influenza Genome Sequencing Consortium
+REFERENCE   2  (bases 1 to 1530)
+  AUTHORS   Oler,A.J. and Fabozzi,G.
   TITLE     Direct Submission
-  JOURNAL   Submitted (04-APR-2012) on behalf of JCVI/Erasmus Medical
-            College/NCBI, National Center for Biotechnology Information, NIH,
-            Bethesda, MD 20894, USA
-COMMENT     This work was supported by the National Institute of Allergy and
-            Infectious Diseases (NIAID), Genome Sequencing Centers for
-            Infectious Diseases (GSCID) program.
+  JOURNAL   Submitted (14-MAR-2014) Office of Cyber Infrastructure and
+            Computational Biology, National Institute of Allergy and Infectious
+            Diseases, 31 Center Drive, Room 3B62, Bethesda, MD 20892, USA
+COMMENT     GenBank Accession Numbers KJ609203-KJ609210 represent sequences
+            from the 8 segments of Influenza A virus (A/Perth/16/2009(H3N2)).
+            
+            ##Assembly-Data-START##
+            Assembly Method       :: SOAPdenovo2-bin-LINUX-generic-r240
+            Coverage              :: 2284
+            Sequencing Technology :: Illumina
+            ##Assembly-Data-END##
 FEATURES             Location/Qualifiers
-     source          1..1537
-                     /bio_material="CEIRS#CIP047BE3292#"
-                     /collection_date="1992"
-                     /country="China: Beijing"
-                     /db_xref="taxon:380950"
-                     /host="Homo sapiens"
-                     /lab_host="xtMK3 MDCK1 passage(s)"
+     source          1..1530
+                     /organism="Influenza A virus (A/Perth/16/2009(H3N2))"
                      /mol_type="viral cRNA"
-                     /organism="Influenza A virus (A/Beijing/32/1992(H3N2))"
-                     /segment="5"
+                     /strain="A/Perth/16/2009"
                      /serotype="H3N2"
-                     /strain="A/Beijing/32/1992"
-     misc_feature    1..1537
-                     /db_xref="IRD:NIGSP_CEIRS_CIP047_RFH3_00116.NP"
-     gene            31..1527
+                     /host="Homo sapiens"
+                     /db_xref="taxon:654811"
+                     /segment="5"
+                     /country="Australia"
+                     /collection_date="07-Apr-2009"
+                     /note="passage details: E6, BEAS-2B 1"
+     misc_feature    1..1530
+                     /db_xref="IRD:IRD-Perth.5"
+     gene            24..1520
                      /gene="NP"
-     CDS             31..1527
+     CDS             24..1520
+                     /gene="NP"
                      /codon_start=1
-                     /gene="NP"
                      /product="nucleocapsid protein"
-                     /protein_id="AFG99681.1"
-                     /translation="MASQGTKRSYEQMETDGERQNATEIRASVGKMIDGIGRFYIQMCT
-                     ELKLSDYEGRLIQNSLTIERMVLSAFDERRNRYLEEHPSAGKDPKKTGGPIYKRVDGRW
-                     MRELVLYDKEEIRRIWRQANNGDDATAGLTHMMIWHSNLNDTTYQRTRALVRTGMDPRM
-                     CSLMQGSTLPRRSGAAGAAVKGIGTMVMELIRMIKRGINDRNFWRGENGRKTRSAYERM
-                     CNILKGKFQTAAQRAMMDQVRESRNPGNAEIEDLIFSARSALILRGSVAHKSCLPACVY
-                     GPAVSSGYDFEKEGYSLVGIDPFKLLQNSQVYSLIRPNENPAHKSQLVWMACHSAAFED
-                     LRLLSFIRGTKVSPRGKLSTRGVQIASNENMDNMESSTLELRSRYWAIRTRSGGNTNQQ
-                     RASAGQISVQPTFSVQRNLPFEKSTVMAAFTGNTEGRTSDMRAEIIRMMEGAKPEEVSF
-                     RGRGVFELSDEKATNPIVPSFDMSNEGSYFFGDNAEEYDN"
-ORIGIN
-        1 aataatcact cactgagtga catcaaaatc atggcgtccc aaggcaccaa acggtcttat
-       61 gaacagatgg aaactgatgg ggaacgccag aatgcaactg agattagggc atccgtcggg
-      121 aagatgattg atggaattgg gcgattctac atccaaatgt gcactgaact taaactcagt
-      181 gattatgaag ggcggttgat ccagaacagc ttgacaatag agagaatggt gctctctgct
-      241 tttgatgaga gaaggaatag atatctggaa gaacacccca gcgcggggaa agatcctaag
-      301 aaaactggag ggcccatata caagagagta gatggaagat ggatgaggga actcgtcctt
-      361 tatgacaaag aagaaataag gcgaatctgg cgccaagcca acaatggtga tgatgcgaca
-      421 gctggtctaa ctcacatgat gatctggcat tccaatttga atgatacaac ataccagagg
-      481 acaagagctc ttgttcgcac cgggatggac cccaggatgt gctctctgat gcagggttcg
-      541 actctcccta gaaggtccgg agctgcaggc gctgcagtca aaggaatcgg gacaatggtg
-      601 atggagctta tcagaatgat caaacggggg atcaacgatc gaaatttctg gagaggtgag
-      661 aatgggcgga aaacaaggag tgcttatgag agaatgtgca acattcttaa aggaaaattt
-      721 caaacagctg cacaaagagc aatgatggat caagtgagag aaagccggaa cccaggaaat
-      781 gctgagatcg aagatctcat attttcggca agatctgcac taatattgag agggtcagtt
-      841 gctcacaaat cttgcctacc tgcctgtgtg tatggacctg cagtatccag tgggtacgac
-      901 ttcgaaaaag agggatattc cttagtggga atagaccctt tcaaactact tcaaaatagt
-      961 caagtataca gcctaatcag accgaacgag aatccagcac acaagagtca gctggtgtgg
-     1021 atggcatgcc attctgctgc atttgaagat ttaagattgt taagcttcat cagagggacc
-     1081 aaagtatctc cgcgggggaa actttcaact agaggagtac aaattgcttc aaatgagaac
-     1141 atggataata tggaatcaag tactcttgaa ctgagaagca ggtactgggc aataaggacc
-     1201 aggagtggag gaaacactaa tcaacagagg gcctccgcag gccaaatcag tgtgcaacct
-     1261 acattttctg tacaaagaaa cctcccattt gaaaagtcaa ccgtcatggc agcattcact
-     1321 ggaaatacgg agggaagaac ctcagacatg agggcagaaa tcataaggat gatggaaggt
-     1381 gcaaaaccag aagaagtgtc cttccgtggg cggggagttt tcgagctctc agacgaaaag
-     1441 gcaacgaacc cgatcgtgcc ctcttttgac atgagtaatg aaggatctta tttcttcgga
-     1501 gacaatgcag aagagtacga caattaagaa aaaaata
+                     /protein_id="AHX37630.1"
+                     /translation="MASQGTKRSYEQMETDGDRQNATEIRASVGKMIDGIGRFYIQMC
+                     TELKLSDHEGRLIQNSLTIEKMVLSAFDERRNKYLEEHPSAGKDPKKTGGPIYRRVDG
+                     KWMRELVLYDKEEIRRIWRQANNGEDATSGLTHIMIWHSNLNDATYQRTRALVRTGMD
+                     PRMCSLMQGSTLPRRSGAAGAAVKGIGTMVMELIRMVKRGINDRNFWRGENGRKTRSA
+                     YERMCNILKGKFQTAAQRAMVDQVRESRNPGNAEIEDLIFLARSALILRGSVAHKSCL
+                     PACAYGPAVSSGYDFEKEGYSLVGIDPFKLLQNSQIYSLIRPNENPAHKSQLVWMACH
+                     SAAFEDLRLLSFIRGTKVSPRGKLSTRGVQIASNENMDNMGSSTLELRSGYWAIRTRS
+                     GGNTNQQRASAGQTSVQPTFSVQRNLPFEKSTIMAAFTGNTEGRTSDMRAEIIRMMES
+                     AKPEEVSFRGRGVFELSDEKATNPIVPSFDMSNEGSYFFGDNAEEYDN"
+ORIGIN      
+        1 actcactgag tgacatcaaa atcatggcgt cccaaggcac caaacggtct tatgaacaga
+       61 tggaaactga tggggatcgc cagaatgcaa ctgagattag ggcatccgta gggaagatga
+      121 ttgatggaat tgggagattc tacatccaaa tgtgcactga acttaaactc agtgatcatg
+      181 aagggcggtt gatccagaac agcttgacaa tagagaaaat ggtactctct gcttttgatg
+      241 aaagaaggaa taaatacctg gaagaacacc ccagcgcggg gaaagatccc aagaaaactg
+      301 ggggacccat atacaggaga gtagatggaa aatggatgag ggaactcgtc ctttatgaca
+      361 aagaagaaat aaggcgaatc tggcgccaag ccaacaatgg tgaggatgct acatctggtc
+      421 taactcacat aatgatttgg cattccaatt tgaatgatgc aacataccag aggacaagag
+      481 ctcttgttcg aactggaatg gatcccagaa tgtgctctct gatgcagggc tcgactctcc
+      541 ctagaaggtc cggagctgca ggtgctgcag tcaaaggaat cgggacaatg gtgatggaac
+      601 taatcagaat ggtcaaacgg gggatcaacg atcgaaattt ttggagaggt gagaatggac
+      661 ggaaaacaag aagtgcttat gagagaatgt gcaacattct taaaggaaaa tttcaaacag
+      721 ctgcacaaag agcaatggtg gatcaagtga gagaaagtcg gaacccagga aacgctgaga
+      781 tcgaagatct catattttta gcaagatctg cattgatatt gagaggatca gttgctcaca
+      841 aatcttgcct acctgcttgt gcgtatggac ctgcagtatc cagtgggtac gacttcgaaa
+      901 aagagggata ttccttggtg ggaatagacc ctttcaaact acttcaaaat agccaaatat
+      961 acagcttaat cagacctaac gagaatccag cacacaagag tcagctggtg tggatggcat
+     1021 gccattctgc tgcatttgaa gatttaagat tgttaagctt catcagaggg acaaaagtat
+     1081 ctcctcgggg gaaactgtca actagaggag tacaaattgc ttcaaatgag aacatggata
+     1141 atatgggatc gagcactctt gaactgagaa gcgggtactg ggccataagg accaggagtg
+     1201 gaggaaacac taatcaacag agggcctccg caggtcaaac cagtgtgcaa cctacgtttt
+     1261 ctgtacaaag aaacctccca tttgaaaagt caaccatcat ggcagcattc actggaaata
+     1321 cggagggaag aacttcagac atgagggcag aaatcataag aatgatggaa agtgcaaaac
+     1381 cagaagaagt gtcattccgg gggaggggag tcttcgagct ctcagacgag aaggcaacga
+     1441 acccgatcgt gccctctttt gatatgagta atgaaggatc ttatttcttc ggagacaatg
+     1501 cagaagagta tgacaattaa ggaaaaaata
 //
