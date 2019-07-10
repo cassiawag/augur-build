@@ -10,13 +10,13 @@ segments = ['ha', 'na', 'pb2', 'pb1', 'pa', 'np', 'mp', 'ns'] # ordering is used
 lineages = ['h3n2', 'h1n1pdm']
 resolutions = ['2y']
 
-def reference_strain(v):
+def reference_strain(wildcards):
     references = {'h3n2':"A/Beijing/32/1992",
                   'h1n1pdm':"A/California/07/2009",
                   'vic':"B/HongKong/02/1993",
                   'yam':"B/Singapore/11/1994"
                   }
-    return references[v.lineage]
+    return references[wildcards.lineage]
 
 def gene_names(w):
     genes_to_translate = {'ha':['SigPep', 'HA1', 'HA2'], 'na':['NA']}
@@ -57,7 +57,7 @@ rule all:
     input:
         auspice_tree = expand("auspice/seattle_flu_seasonal_{lineage}_{segment}_{resolution}_tree.json", lineage=lineages, segment=segments, resolution=resolutions),
         auspice_meta = expand("auspice/seattle_flu_seasonal_{lineage}_{segment}_{resolution}_meta.json", lineage=lineages, segment=segments, resolution=resolutions),
-        aggregated = expand("aggregated/{lineage}_{resolution}.txt", lineage=lineages, resolution=resolutions)
+        aggregated = expand("results/aggregated/tree-raw_{lineage}_genome_{resolution}.nwk", lineage=lineages, resolution=resolutions)
 
 rule files:
     params:
@@ -536,25 +536,11 @@ rule clusters_intermediate:
     input:
         "results/clusters/pre_{lineage}_genome_{resolution}/{cluster}.fasta"
     output:
-        "results/clusters/aligned_{lineage}_genome_{resolution}/{cluster}.fasta"
+        "results/clusters/post_{lineage}_genome_{resolution}/{cluster}.fasta"
     shell:
         "cp {input} {output}"
 
-rule tree_clusters:
-    message: "Building tree for each cluster"
-    input:
-        alignment = rules.clusters_intermediate.output
-    output:
-        tree = "results/clusters/tree-raw_{lineage}_genome_{resolution}/{cluster}.nwk"
-    shell:
-        """
-        augur tree \
-            --alignment {input.alignment} \
-            --output {output.tree} \
-            --nthreads 1
-        """
-
-rule reference_genomes:
+rule reference_genome:
     message: "Creating full-genome reference genbank file."
     input:
         references = expand("config/reference_{{lineage}}_{segment}.gb", segment=segments)
@@ -567,21 +553,54 @@ rule reference_genomes:
             --output {output.ref_genome}
         """
 
+rule align_clusters:
+    message:
+        """
+        Aligning sequences, keep reference
+        """
+    input:
+        sequences = rules.clusters_intermediate.output,
+        reference = rules.reference_genome.output.ref_genome
+    output:
+        alignment = "results/clusters/aligned_{lineage}_genome_{resolution}/{cluster}.fasta"
+    shell:
+        """
+        augur align \
+            --sequences {input.sequences} \
+            --reference-sequence {input.reference} \
+            --output {output.alignment} \
+            --fill-gaps \
+            --nthreads 1
+        """
+
+rule tree_clusters:
+    message: "Building tree for each cluster"
+    input:
+        alignment = rules.align_clusters.output.alignment
+    output:
+        tree = "results/clusters/tree-raw_{lineage}_genome_{resolution}/{cluster}.nwk"
+    shell:
+        """
+        augur tree \
+            --alignment {input.alignment} \
+            --output {output.tree} \
+            --nthreads 1
+        """
+
 rule refine_clusters:
     message:
         """
-        Refining tree
+        Refining tree, reroot to reference, don't produce timetree
         """
     input:
         tree = rules.tree_clusters.output.tree,
-        alignment = rules.clusters_intermediate.output,
+        alignment = rules.align_clusters.output.alignment,
         metadata = "data/metadata_{lineage}_ha.tsv"
     output:
         tree = "results/clusters/tree_{lineage}_genome_{resolution}/{cluster}.nwk",
         node_data = "results/clusters/branch-lengths_{lineage}_genome_{resolution}/{cluster}.json"
     params:
-        coalescent = "const",
-        date_inference = "marginal"
+        root = reference_strain
     shell:
         """
         augur refine \
@@ -590,10 +609,7 @@ rule refine_clusters:
             --metadata {input.metadata} \
             --output-tree {output.tree} \
             --output-node-data {output.node_data} \
-            --timetree \
-            --coalescent {params.coalescent} \
-            --date-confidence \
-            --date-inference {params.date_inference}
+            --root {params.root}
         """
 
 def aggregate_input(wildcards):
@@ -603,14 +619,17 @@ def aggregate_input(wildcards):
            resolution=wildcards.resolution,
            cluster=glob_wildcards(os.path.join(checkpoint_output, "{cluster}.fasta")).cluster)
 
-# an aggregation over all produced clusters
-rule clusters_aggregate:
+rule aggregate_cluster_trees:
     input:
-        aggregate_input
+        trees = aggregate_input
     output:
-        "aggregated/{lineage}_{resolution}.txt"
+        tree = "results/aggregated/tree-raw_{lineage}_genome_{resolution}.nwk"
     shell:
-        "cat {input} > {output}"
+        """
+        python3 scripts/merge_trees.py \
+            --trees {input.trees} \
+            --output {output.tree}
+        """
 
 rule clean:
     message: "Removing directories: {params}"
