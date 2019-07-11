@@ -55,12 +55,10 @@ def filter_to_seattle(metadata_file, clusters):
             meta_strains_seattle = meta_file[meta_file["region"] == 'seattle']
             strains_seattle_list = meta_strains_seattle.loc[:,'strain'].tolist()
 
-
     for cluster, strain_att in clusters.items():
         check = any(strain in strain_att.keys() for strain in strains_seattle_list)
         if check:
             cluster_seattle.append(cluster)
-            print(cluster_seattle)
 
     final_clusters = clusters.copy()
 
@@ -90,7 +88,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--clusters', type = str, required = True, help = "cluster JSON files")
     parser.add_argument('--nt-muts', nargs = '+', type = str, required = True, help = "list of nt-muts JSON files")
-    parser.add_argument('--metadata', nargs='+', help="file with metadata associated with viral sequences, one for each segment")
+    parser.add_argument('--metadata', nargs = '+', type = str, required = True, help = "metadata of strains, one for each segment")
     parser.add_argument('--min-size', type = int, default = 2, help = "Minimum number of strains in cluster. Default is 2.")
     parser.add_argument('--output-dir', type = str, required = True, help = "output directory")
     args = parser.parse_args()
