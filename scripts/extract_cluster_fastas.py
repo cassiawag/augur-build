@@ -4,6 +4,7 @@ Creates full-genome fasta files for each clusters.
 import os
 import json
 import argparse
+import pandas as pd
 
 '''
 Load clusters into usable python dictionary
