@@ -4,6 +4,7 @@ Creates full-genome fasta files for each clusters.
 import os
 import json
 import argparse
+import pandas as pd
 
 '''
 Load clusters into usable python dictionary
@@ -42,6 +43,30 @@ def sequences(clusters, files):
             clusters[cluster_id][strain] = ''.join(sequence)
     return clusters
 
+'''
+Filters clusters to only those that contain at least one strain from Seattle
+'''
+def filter_to_seattle(metadata_file, clusters):
+    strains_seattle_list = []
+    cluster_seattle = []
+    final_clusters = {}
+    for mfname in metadata_file:
+        with open(mfname) as mfile:
+            meta_file = pd.read_csv(mfile, sep='\t')
+            meta_strains_seattle = meta_file[meta_file["region"] == 'seattle']
+            strains_seattle_list = meta_strains_seattle.loc[:,'strain'].tolist()
+
+    for cluster, strain_att in clusters.items():
+        check = any(strain in strain_att.keys() for strain in strains_seattle_list)
+        if check:
+            cluster_seattle.append(cluster)
+
+    final_clusters = clusters.copy()
+
+    for cluster in clusters.keys():
+        if cluster not in cluster_seattle:
+            del final_clusters[cluster]
+    return final_clusters
 
 '''
 Outputs python dictionary sequences into fasta files
@@ -64,6 +89,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--clusters', type = str, required = True, help = "cluster JSON files")
     parser.add_argument('--nt-muts', nargs = '+', type = str, required = True, help = "list of nt-muts JSON files")
+    parser.add_argument('--metadata', nargs = '+', type = str, required = True, help = "metadata of strains, one for each segment")
     parser.add_argument('--min-size', type = int, default = 2, help = "Minimum number of strains in cluster. Default is 2.")
     parser.add_argument('--output-dir', type = str, required = True, help = "output directory")
     args = parser.parse_args()
@@ -74,5 +100,8 @@ if __name__ == '__main__':
     # Makes sequences dictionary
     cluster_seq_dict = sequences(cluster_dict, args.nt_muts)
 
+    #filters for clusters with seattle strains
+    seattle_clus = filter_to_seattle(args.metadata, cluster_seq_dict)
+
     # Outputs fasta files
-    export_genomes(cluster_seq_dict, args.output_dir)
+    export_genomes(seattle_clus, args.output_dir)

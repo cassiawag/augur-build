@@ -479,7 +479,8 @@ checkpoint clusters_fasta:
     message: "Creating directory of fasta files of full-genome clusters."
     input:
         clusters = rules.clustering.output.node_data,
-        nt_muts = expand("results/nt-muts_{{lineage}}_{segment}_{{resolution}}.json", segment=segments)
+        nt_muts = expand("results/nt-muts_{{lineage}}_{segment}_{{resolution}}.json", segment=segments),
+        metadata = expand("data/metadata_{{lineage}}_{segment}.tsv", segment = segments)
     params:
         min_size = 2
     output:
@@ -489,6 +490,7 @@ checkpoint clusters_fasta:
         python3 scripts/extract_cluster_fastas.py \
             --clusters {input.clusters} \
             --nt-muts {input.nt_muts} \
+            --metadata {input.metadata} \
             --min-size {params.min_size} \
             --output-dir {output.dir}
         """
