@@ -1,57 +1,10 @@
-from datetime import date
-from treetime.utils import numeric_date
-
 path_to_fauna = '../fauna'
 if os.environ.get('FAUNA_PATH'):
     path_to_fauna = os.environ.get('FAUNA_PATH')
 
-min_length = 800
-segments = ['ha', 'na', 'pb2', 'pb1', 'pa', 'np', 'mp', 'ns'] # ordering is used by scripts/reassort
+segments = ['ha', 'na', 'pb2', 'pb1', 'pa', 'np', 'mp', 'ns']
 lineages = ['h3n2', 'h1n1pdm']
 resolutions = ['2y']
-
-def reference_strain(wildcards):
-    references = {'h3n2':"A/Beijing/32/1992",
-                  'h1n1pdm':"A/California/07/2009",
-                  'vic':"B/HongKong/02/1993",
-                  'yam':"B/Singapore/11/1994"
-                  }
-    return references[wildcards.lineage]
-
-def gene_names(w):
-    genes_to_translate = {'ha':['SigPep', 'HA1', 'HA2'], 'na':['NA']}
-    return genes_to_translate[w.segment]
-
-def translations(w):
-    genes = gene_names(w)
-    return ["results/aa-seq_%s_%s_%s_%s.fasta"%(w.lineage, w.segment, w.resolution, g)
-            for g in genes]
-
-def clock_rate(w):
-    rate = {
-        ('h3n2', 'ha'): 0.00356, ('h3n2', 'na'): 0.00298, ('h3n2', 'mp'): 0.00082,
-        ('h3n2', 'np'): 0.00140, ('h3n2', 'ns'): 0.00193, ('h3n2', 'pa'): 0.00226,
-        ('h3n2', 'pb1'): 0.00177, ('h3n2', 'pb2'): 0.00230,
-        ('h1n1pdm', 'ha'): 0.00329, ('h1n1pdm', 'na'): 0.00342, ('h1n1pdm', 'mp'): 0.00209,
-        ('h1n1pdm', 'np'): 0.00196, ('h1n1pdm', 'ns'): 0.00278, ('h1n1pdm', 'pa'): 0.00235,
-        ('h1n1pdm', 'pb1'): 0.00188, ('h1n1pdm', 'pb2'): 0.00224,
-        ('vic', 'ha'): 0.0024, ('vic', 'na'): 0.0015,
-        ('yam', 'ha'): 0.0019, ('yam', 'na'): 0.0013
-    }
-    return rate[(w.lineage, w.segment)]
-
-#
-# Define clades functions
-#
-def _get_clades_file_for_wildcards(wildcards):
-    if wildcards.segment == "ha":
-        return "config/clades_%s_ha.tsv"%(wildcards.lineage)
-    else:
-        return "results/clades_%s_ha_%s.json"%(wildcards.lineage, wildcards.resolution)
-
-#
-# Define rules.
-#
 
 rule all:
     input:
@@ -148,7 +101,7 @@ rule concat_metadata:
         python3 scripts/concat_metadata.py \
             --files {input.background_metadata} {input.seattle_metadata} \
             --mergeby strain \
-            --fields date region country division site site_type flu_shot sex residence_census_tract \
+            --fields date region country division residence_census_tract site site_type site_category flu_shot age age_category sex \
             > {output.metadata}
         """
 
@@ -167,7 +120,7 @@ rule filter:
     output:
         sequences = 'results/filtered_{lineage}_{segment}.fasta'
     params:
-        min_length = min_length
+        min_length = 800
     shell:
         """
         augur filter \
@@ -260,6 +213,19 @@ rule tree:
             --output {output.tree} \
             --nthreads 1
         """
+
+def clock_rate(w):
+    rate = {
+        ('h3n2', 'ha'): 0.00356, ('h3n2', 'na'): 0.00298, ('h3n2', 'mp'): 0.00082,
+        ('h3n2', 'np'): 0.00140, ('h3n2', 'ns'): 0.00193, ('h3n2', 'pa'): 0.00226,
+        ('h3n2', 'pb1'): 0.00177, ('h3n2', 'pb2'): 0.00230,
+        ('h1n1pdm', 'ha'): 0.00329, ('h1n1pdm', 'na'): 0.00342, ('h1n1pdm', 'mp'): 0.00209,
+        ('h1n1pdm', 'np'): 0.00196, ('h1n1pdm', 'ns'): 0.00278, ('h1n1pdm', 'pa'): 0.00235,
+        ('h1n1pdm', 'pb1'): 0.00188, ('h1n1pdm', 'pb2'): 0.00224,
+        ('vic', 'ha'): 0.0024, ('vic', 'na'): 0.0015,
+        ('yam', 'ha'): 0.0019, ('yam', 'na'): 0.0013
+    }
+    return rate[(w.lineage, w.segment)]
 
 rule refine:
     message:
@@ -354,6 +320,12 @@ rule traits:
             --columns {params.columns} \
             --confidence
         """
+
+def _get_clades_file_for_wildcards(wildcards):
+    if wildcards.segment == "ha":
+        return "config/clades_%s_ha.tsv"%(wildcards.lineage)
+    else:
+        return "results/clades_%s_ha_%s.json"%(wildcards.lineage, wildcards.resolution)
 
 rule clades:
     message: "Annotating clades"
@@ -476,7 +448,7 @@ rule export:
         """
 
 checkpoint clusters_fasta:
-    message: "Creating directory of fasta files of full-genome clusters."
+    message: "Creating directory of fasta files of full-genome clusters"
     input:
         clusters = rules.clustering.output.node_data,
         nt_muts = expand("results/nt-muts_{{lineage}}_{segment}_{{resolution}}.json", segment=segments),
@@ -549,6 +521,15 @@ rule tree_clusters:
             --output {output.tree} \
             --nthreads 1
         """
+
+def reference_strain(wildcards):
+    references = {
+        'h3n2': "A/Beijing/32/1992",
+        'h1n1pdm': "A/California/07/2009",
+        'vic': "B/HongKong/02/1993",
+        'yam': "B/Singapore/11/1994"
+    }
+    return references[wildcards.lineage]
 
 rule refine_clusters:
     message:

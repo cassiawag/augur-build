@@ -32,7 +32,7 @@ if __name__ == '__main__':
         targets = []
         for resolution in params.resolutions:
             for segment in params.segments:
-                targets.append('auspice/seattle_flu_seasonal_%s_%s_%s_global_tree.json'%(lineage, segment, resolution))
+                targets.append('auspice/seattle_flu_seasonal_%s_%s_%s_tree.json'%(lineage, segment, resolution))
         call.extend(targets)
         print(' '.join(call))
         log = open('logs/%s.txt'%(lineage), 'w')
