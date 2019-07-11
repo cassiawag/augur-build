@@ -11,7 +11,7 @@ lineages = ['h3n2', 'h1n1pdm']
 resolutions = ['2y']
 
 def reference_strain(wildcards):
-    references = {'h3n2':"A/Perth/16/2009",
+    references = {'h3n2':"A/Beijing/32/1992",
                   'h1n1pdm':"A/California/07/2009",
                   'vic':"B/HongKong/02/1993",
                   'yam':"B/Singapore/11/1994"
