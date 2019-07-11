@@ -11,7 +11,7 @@ lineages = ['h3n2', 'h1n1pdm']
 resolutions = ['2y']
 
 def reference_strain(wildcards):
-    references = {'h3n2':"A/Beijing/32/1992",
+    references = {'h3n2':"A/Perth/16/2009",
                   'h1n1pdm':"A/California/07/2009",
                   'vic':"B/HongKong/02/1993",
                   'yam':"B/Singapore/11/1994"
@@ -544,12 +544,15 @@ rule reference_genome:
     message: "Creating full-genome reference genbank file."
     input:
         references = expand("config/reference_{{lineage}}_{segment}.gb", segment=segments)
+    params:
+        ref_strain = reference_strain
     output:
         ref_genome = "config/reference_{lineage}_genome.gb"
     shell:
         """
         python3 scripts/create_ref_genome.py \
             --references {input.references} \
+            --ref-strain {params.ref_strain} \
             --output {output.ref_genome}
         """
 
