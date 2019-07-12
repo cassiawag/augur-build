@@ -6,6 +6,15 @@ segments = ['ha', 'na', 'pb2', 'pb1', 'pa', 'np', 'mp', 'ns']
 lineages = ['h3n2', 'h1n1pdm']
 resolutions = ['2y']
 
+def reference_strain(wildcards):
+    references = {
+        'h3n2': "A/Beijing/32/1992",
+        'h1n1pdm': "A/California/07/2009",
+        'vic': "B/HongKong/02/1993",
+        'yam': "B/Singapore/11/1994"
+    }
+    return references[wildcards.lineage]
+
 rule all:
     input:
         auspice_tree = expand("auspice/seattle_flu_seasonal_{lineage}_{segment}_{resolution}_tree.json", lineage=lineages, segment=segments, resolution=resolutions),
@@ -524,15 +533,6 @@ rule tree_clusters:
             --output {output.tree} \
             --nthreads 1
         """
-
-def reference_strain(wildcards):
-    references = {
-        'h3n2': "A/Beijing/32/1992",
-        'h1n1pdm': "A/California/07/2009",
-        'vic': "B/HongKong/02/1993",
-        'yam': "B/Singapore/11/1994"
-    }
-    return references[wildcards.lineage]
 
 rule refine_clusters:
     message:

@@ -9,6 +9,8 @@ logs/
 figures/
 targets/
 aggregated/
+config/reference_h3n2_genome.gb
+config/reference_h1n1pdm_genome.gb
 
 # Sensitive environment variables
 environment*
