@@ -1,5 +1,5 @@
 {
-  "title": "Real-time tracking of influenza A/H3N2 evolution",
+  "title": "Real-time tracking of influenza A/H3N2 evolution by SFS",
   "color_options": {
     "gt": {
       "menuItem": "genotype",
@@ -38,6 +38,18 @@
       "legendTitle": "Cluster",
       "menuItem": "cluster",
       "type": "discrete"
+    },
+    "age_category": {
+      "key": "age_category",
+      "legendTitle": "Age category",
+      "menuItem": "age category",
+      "type": "discrete"
+    },
+    "site_category": {
+      "key": "site_category",
+      "legendTitle": "Site category",
+      "menuItem": "site category",
+      "type": "discrete"
     }
   },
   "geo": [
@@ -50,14 +62,12 @@
     "geoResolution": "region"
   },
   "maintainer": [
-    "Trevor Bedford and Barney Potter",
+    "Trevor Bedford",
     "http://bedford.io/"
   ],
   "filters": [
     "clade_membership",
-    "region",
-    "country",
-    "authors"
+    "region"
   ],
   "panels": [
     "tree",
