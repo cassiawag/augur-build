@@ -581,6 +581,125 @@ rule aggregate_cluster_trees:
             --output {output.tree}
         """
 
+rule align_aggregated:
+    message: "Concatenates clusters alignment into single fasta file."
+    input:
+        clusters_alignment = "results/clusters/aligned_{lineage}_genome_{resolution}/*.fasta"
+    output:
+        aggregated_alignment = "results/aggregated/aligned_{lineage}_genome_{resolution}.fasta"
+    shell:
+        "cat {input.clusters_alignment} > {output.aggregated_alignment}"
+
+rule refine_aggregated:
+    message:
+        """
+        Refining aggregate tree
+          - estimate timetree
+          - use {params.coalescent} coalescent timescale
+          - estimate {params.date_inference} node dates
+          - filter tips more than {params.clock_filter_iqd} IQDs from clock expectation
+          - Does not reroot
+        """
+    input:
+        tree = rules.aggregate_cluster_trees.output.tree,
+        alignment = rules.align_aggregated.output.aggregated_alignment,
+        metadata = "data/metadata_{lineage}_ha.tsv"
+    output:
+        tree = "results/aggregated/tree_{lineage}_genome_{resolution}.nwk",
+        node_data = "results/aggregated/branch-lengths_{lineage}_genome_{resolution}.json"
+    params:
+        coalescent = "const",
+        date_inference = "marginal",
+        clock_filter_iqd = 4,
+    shell:
+        """
+        augur refine \
+            --tree {input.tree} \
+            --alignment {input.alignment} \
+            --metadata {input.metadata} \
+            --output-tree {output.tree} \
+            --output-node-data {output.node_data} \
+            --timetree \
+            --coalescent {params.coalescent} \
+            --date-confidence \
+            --date-inference {params.date_inference} \
+            --clock-filter-iqd {params.clock_filter_iqd} \
+            --keep-root
+        """
+
+rule ancestral_aggregated:
+    message: "Reconstructing ancestral sequences and mutations for aggregated trees"
+    input:
+        tree = rules.refine_aggregated.output.tree,
+        alignment = rules.align_aggregated.output.aggregated_alignment
+    output:
+        node_data = "results/aggregated/nt-muts_{lineage}_genome_{resolution}.json"
+    params:
+        inference = "joint"
+    shell:
+        """
+        augur ancestral \
+            --tree {input.tree} \
+            --alignment {input.alignment} \
+            --output {output.node_data} \
+            --inference {params.inference}
+        """
+
+rule translate_aggregated:
+    message: "Translating amino acid sequences for aggregated trees"
+    input:
+        tree = rules.refine_aggregated.output.tree,
+        node_data = rules.ancestral_aggregated.output.node_data,
+        reference = files.reference_genome
+    output:
+        node_data = "results/aggregated/aa-muts_{lineage}_genome_{resolution}.json",
+    shell:
+        """
+        augur translate \
+            --tree {input.tree} \
+            --ancestral-sequences {input.node_data} \
+            --reference-sequence {input.reference} \
+            --output {output.node_data} \
+        """
+
+def _get_node_data_for_export_aggregated(wildcards):
+    """Return a list of node data files to include for aggregated build's wildcards.
+    """
+    # Define inputs shared by all builds.
+    inputs = [
+        rules.refine_aggregated.output.node_data,
+        rules.ancestral_aggregated.output.node_data,
+        rules.translate_aggregated.output.node_data
+    ]
+
+    # Convert input files from wildcard strings to real file names.
+    inputs = [input_file.format(**wildcards) for input_file in inputs]
+    return inputs
+
+rule export_aggregated:
+    input:
+        tree = rules.refine_aggregated.output.tree,
+        metadata = "data/metadata_{lineage}_ha.tsv"
+        colors = files.colors,
+        lat_longs = files.lat_longs,
+        auspice_config = files.auspice_config,
+        node_data = _get_node_data_for_export_aggregated
+    output:
+        auspice_tree = "auspice/seattle_flu_seasonal_{lineage}_genome_{resolution}_tree.json",
+        auspice_meta = "auspice/seattle_flu_seasonal_{lineage}_genome_{resolution}_meta.json"
+    shell:
+        """
+        augur export \
+            --tree {input.tree} \
+            --metadata {input.metadata} \
+            --node-data {input.node_data} \
+            --colors {input.colors} \
+            --lat-longs {input.lat_longs} \
+            --auspice-config {input.auspice_config} \
+            --output-tree {output.auspice_tree} \
+            --output-meta {output.auspice_meta}
+        """
+
 rule clean:
     message: "Removing directories: {params}"
     params:
