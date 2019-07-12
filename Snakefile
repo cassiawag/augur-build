@@ -559,7 +559,7 @@ rule refine_clusters:
             --root {params.root}
         """
 
-def aggregate_input(wildcards):
+def aggregate_trees(wildcards):
     checkpoint_output = checkpoints.clusters_fasta.get(**wildcards).output[0]
     return expand("results/clusters/tree_{lineage}_genome_{resolution}/{cluster}.nwk",
            lineage=wildcards.lineage,
@@ -568,7 +568,7 @@ def aggregate_input(wildcards):
 
 rule aggregate_cluster_trees:
     input:
-        trees = aggregate_input
+        trees = aggregate_trees
     output:
         tree = "results/aggregated/tree-raw_{lineage}_genome_{resolution}.nwk"
     params:
@@ -581,14 +581,21 @@ rule aggregate_cluster_trees:
             --output {output.tree}
         """
 
+def aggregate_alignments(wildcards):
+    checkpoint_output = checkpoints.clusters_fasta.get(**wildcards).output[0]
+    return expand("results/clusters/aligned_{lineage}_genome_{resolution}/{cluster}.fasta",
+           lineage=wildcards.lineage,
+           resolution=wildcards.resolution,
+           cluster=glob_wildcards(os.path.join(checkpoint_output, "{cluster}.fasta")).cluster)
+
 rule align_aggregated:
     message: "Concatenates clusters alignment into single fasta file."
     input:
-        clusters_alignment = "results/clusters/aligned_{lineage}_genome_{resolution}/*.fasta"
+        alignments = aggregate_alignments
     output:
         aggregated_alignment = "results/aggregated/aligned_{lineage}_genome_{resolution}.fasta"
     shell:
-        "cat {input.clusters_alignment} > {output.aggregated_alignment}"
+        "cat {input.alignments} > {output.aggregated_alignment}"
 
 rule refine_aggregated:
     message:
@@ -610,7 +617,7 @@ rule refine_aggregated:
     params:
         coalescent = "const",
         date_inference = "marginal",
-        clock_filter_iqd = 4,
+        clock_filter_iqd = 4
     shell:
         """
         augur refine \
@@ -650,7 +657,7 @@ rule translate_aggregated:
     input:
         tree = rules.refine_aggregated.output.tree,
         node_data = rules.ancestral_aggregated.output.node_data,
-        reference = files.reference_genome
+        reference = rules.reference_genome.output.ref_genome
     output:
         node_data = "results/aggregated/aa-muts_{lineage}_genome_{resolution}.json",
     shell:
@@ -679,7 +686,7 @@ def _get_node_data_for_export_aggregated(wildcards):
 rule export_aggregated:
     input:
         tree = rules.refine_aggregated.output.tree,
-        metadata = "data/metadata_{lineage}_ha.tsv"
+        metadata = "data/metadata_{lineage}_ha.tsv",
         colors = files.colors,
         lat_longs = files.lat_longs,
         auspice_config = files.auspice_config,
