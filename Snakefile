@@ -9,7 +9,8 @@ resolutions = ['2y']
 wildcard_constraints:
     lineage = "[A-Za-z0-9]{3,7}",
     segment = "[A-Za-z0-9]{2,3}",
-    resolution = "[A-Za-z0-9]{2}"
+    resolution = "[A-Za-z0-9]{2}",
+    cluster = "[A-Za-z0-9]{8,10}"
 
 def reference_strain(wildcards):
     references = {
@@ -813,6 +814,32 @@ rule traits_aggregated:
             --confidence
         """
 
+rule lbi_aggregated:
+    message:
+        """
+        lbi_aggregated: Calculating segment LBI
+        {wildcards.lineage} {wildcards.resolution}
+        """
+    input:
+        tree = rules.refine_aggregated.output.tree,
+        branch_lengths = rules.refine_aggregated.output.node_data
+    params:
+        tau = 0.3,
+        window = 0.5,
+        names = "lbi"
+    output:
+        node_data = "results/aggregated/lbi_{lineage}_genome_{resolution}.json"
+    shell:
+        """
+        augur lbi \
+            --tree {input.tree} \
+            --branch-lengths {input.branch_lengths} \
+            --attribute-names {params.names} \
+            --tau {params.tau} \
+            --window {params.window} \
+            --output {output.node_data}
+        """
+
 def _get_node_data_for_export_aggregated(wildcards):
     """Return a list of node data files to include for aggregated build's wildcards.
     """
@@ -822,7 +849,9 @@ def _get_node_data_for_export_aggregated(wildcards):
         rules.ancestral_aggregated.output.node_data,
         rules.translate_aggregated.output.node_data,
         rules.clades_aggregated.output.node_data,
-        rules.traits_aggregated.output.node_data
+        rules.traits_aggregated.output.node_data,
+        rules.lbi_aggregated.output.node_data,
+        rules.clustering.output.node_data
     ]
 
     # Convert input files from wildcard strings to real file names.

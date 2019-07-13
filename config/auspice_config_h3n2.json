@@ -14,10 +14,16 @@
       "key": "num_date"
     },
     "region": {
-      "key":"region",
-      "legendTitle":"Region",
-      "menuItem":"region",
-      "type":"discrete"
+      "key": "region",
+      "legendTitle": "Region",
+      "menuItem": "region",
+      "type": "discrete"
+    },
+    "location": {
+      "key": "location",
+      "legendTitle": "Location",
+      "menuItem": "location",
+      "type": "discrete"
     },
     "clade_membership": {
       "key": "clade_membership",
