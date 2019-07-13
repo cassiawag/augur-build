@@ -62,19 +62,6 @@ FEATURES             Location/Qualifiers
                      TNGTSKIKMKWGMEMRRCLLQSLQQIESMIEAESSVKEKDMTKEFFENKSETWPIGES
                      PRGVEEGSIGKVCRTLLAKSVFNSLYASPQLEGFSAESRKLLLIVQALRDNLEPGTFD
                      LGGLYEAIEECLINDPWVLLNASWFNSFLTHALK"
-     gene            5..704
-                     /gene="PA-X"
-     CDS             join(5..577,579..704)
-                     /gene="PA-X"
-                     /ribosomal_slippage
-                     /codon_start=1
-                     /product="PA-X protein"
-                     /protein_id="AFP55028.1"
-                     /translation="MEDFVRQCFNPMIVELAEKAMKEYGEDPKIETNKFAAICTHLEV
-                     CFMYSDFHFIDERGESIIVESGDPNALLKHRFEIIEGRDRIMAWTVVNSICNTTGVEK
-                     PKFLPDLYDYKENRFIEIGVTRREVHIYYLEKANKIKSEKTHIHIFSFTGEEMATKAD
-                     YTLDEESRARIKTRLFTIRQEMASRSLWDSFVSPKEAKRQLKKNLRLQELCASLPTKV
-                     SHRTSPALKTLEPM"
 ORIGIN      
         1 caaaatggaa gactttgtgc gacaatgctt caatccaatg atcgtcgagc ttgcggaaaa
        61 ggcaatgaaa gaatatgggg aagatccgaa aatcgaaact aacaagtttg ctgcaatatg
