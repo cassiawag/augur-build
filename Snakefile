@@ -671,6 +671,28 @@ rule translate_aggregated:
             --output {output.node_data} \
         """
 
+rule traits_aggregated:
+    message:
+        """
+        Inferring ancestral traits for {params.columns!s}
+        """
+    input:
+        tree = rules.refine_aggregated.output.tree,
+        metadata = "data/metadata_{lineage}_ha.tsv"
+    output:
+        node_data = "results/aggregated/traits_{lineage}_genome_{resolution}.json",
+    params:
+        columns = "region"
+    shell:
+        """
+        augur traits \
+            --tree {input.tree} \
+            --metadata {input.metadata} \
+            --output {output.node_data} \
+            --columns {params.columns} \
+            --confidence
+        """
+
 def _get_node_data_for_export_aggregated(wildcards):
     """Return a list of node data files to include for aggregated build's wildcards.
     """
@@ -678,7 +700,8 @@ def _get_node_data_for_export_aggregated(wildcards):
     inputs = [
         rules.refine_aggregated.output.node_data,
         rules.ancestral_aggregated.output.node_data,
-        rules.translate_aggregated.output.node_data
+        rules.translate_aggregated.output.node_data,
+        rules.traits_aggregated.output.node_data
     ]
 
     # Convert input files from wildcard strings to real file names.

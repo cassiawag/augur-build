@@ -1,5 +1,5 @@
 {
-  "title": "Real-time tracking of influenza A/H1N1pdm evolution by SFS",
+  "title": "Real-time tracking of influenza A/H1N1pdm evolution",
   "color_options": {
     "gt": {
       "menuItem": "genotype",
@@ -53,7 +53,6 @@
     }
   },
   "geo": [
-    "country",
     "region"
   ],
   "defaults": {
@@ -67,7 +66,9 @@
   ],
   "filters": [
     "clade_membership",
-    "region"
+    "region",
+    "age_category",
+    "site_category"
   ],
   "panels": [
     "tree",
