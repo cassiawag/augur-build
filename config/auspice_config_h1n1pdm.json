@@ -53,7 +53,8 @@
     }
   },
   "geo": [
-    "region"
+    "region",
+    "location"
   ],
   "defaults": {
     "mapTriplicate": true,

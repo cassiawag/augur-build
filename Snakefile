@@ -130,7 +130,7 @@ rule concat_metadata:
         python3 scripts/concat_metadata.py \
             --files {input.background_metadata} {input.seattle_metadata} \
             --mergeby strain \
-            --fields date region country division residence_census_tract site site_type site_category flu_shot age age_category sex \
+            --fields date region location country division residence_census_tract site site_type site_category flu_shot age age_category sex \
             > {output.metadata}
         """
 
@@ -764,6 +764,28 @@ rule translate_aggregated:
             --output {output.node_data} \
         """
 
+rule clades_aggregated:
+    message:
+        """
+        clades_aggregated: Annotating clades
+        {wildcards.lineage} {wildcards.resolution}
+        """
+    input:
+        tree = rules.refine_aggregated.output.tree,
+        nt_muts = rules.ancestral_aggregated.output.node_data,
+        aa_muts = rules.translate_aggregated.output.node_data,
+        clades = "config/clades_{lineage}_ha.tsv"
+    output:
+        node_data = "results/aggregated/clades_{lineage}_genome_{resolution}.json"
+    shell:
+        """
+        augur clades \
+            --tree {input.tree} \
+            --mutations {input.nt_muts} {input.aa_muts} \
+            --clades {input.clades} \
+            --output {output.node_data}
+        """
+
 rule traits_aggregated:
     message:
         """
@@ -776,7 +798,7 @@ rule traits_aggregated:
     output:
         node_data = "results/aggregated/traits_{lineage}_genome_{resolution}.json",
     params:
-        columns = "region"
+        columns = "region location"
     shell:
         """
         augur traits \
@@ -795,6 +817,7 @@ def _get_node_data_for_export_aggregated(wildcards):
         rules.refine_aggregated.output.node_data,
         rules.ancestral_aggregated.output.node_data,
         rules.translate_aggregated.output.node_data,
+        rules.clades_aggregated.output.node_data,
         rules.traits_aggregated.output.node_data
     ]
 

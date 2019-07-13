@@ -85,6 +85,34 @@ region_mapping = {
     "usa": "?"
 }
 
+def get_region(row):
+    region = "?"
+    if "country" in row and "division" in row:
+        if row["division"] in region_mapping:
+            region = region_mapping[row["division"]]
+        elif row["country"] in region_mapping:
+            region = region_mapping[row["country"]]
+        else:
+            region = row["region"]
+    else:
+        region = row["region"]
+    return region
+
+def get_location(row):
+    location = "?"
+    if "country" in row and "division" in row:
+        if row["division"] in region_mapping:
+            location = region_mapping[row["division"]]
+        elif row["country"] in region_mapping:
+            location = region_mapping[row["country"]]
+        else:
+            location = row["region"]
+    else:
+        location = row["region"]
+    if "residence_census_tract" in row:
+        location = str(int(row["residence_census_tract"]))
+    return location
+
 def select(file, mergeby, fields):
     entries = pd.read_csv(file, sep='\t')
     mapping = {}
@@ -95,15 +123,9 @@ def select(file, mergeby, fields):
                 if field in row:
                     if str(row[field]) != 'nan':
                         if field == "region":
-                            if "country" in row and "division" in row:
-                                if row["division"] in region_mapping:
-                                    values.append(region_mapping[row["division"]])
-                                elif row["country"] in region_mapping:
-                                    values.append(region_mapping[row["country"]])
-                                else:
-                                    values.append(row["region"])
-                            else:
-                                values.append(row["region"])
+                            values.append(get_region(row))
+                        elif field == "location":
+                            values.append(get_location(row))
                         else:
                             if field in cast_to_int:
                                 values.append(str(int(row[field])))
