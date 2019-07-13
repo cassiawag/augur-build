@@ -6,6 +6,11 @@ segments = ['ha', 'na', 'pb2', 'pb1', 'pa', 'np', 'mp', 'ns']
 lineages = ['h3n2', 'h1n1pdm']
 resolutions = ['2y']
 
+wildcard_constraints:
+    lineage = "[A-Za-z0-9]{3,7}",
+    segment = "[A-Za-z0-9]{2,3}",
+    resolution = "[A-Za-z0-9]{2}"
+
 def reference_strain(wildcards):
     references = {
         'h3n2': "A/Beijing/32/1992",
@@ -19,7 +24,8 @@ rule all:
     input:
         auspice_tree = expand("auspice/seattle_flu_seasonal_{lineage}_{segment}_{resolution}_tree.json", lineage=lineages, segment=segments, resolution=resolutions),
         auspice_meta = expand("auspice/seattle_flu_seasonal_{lineage}_{segment}_{resolution}_meta.json", lineage=lineages, segment=segments, resolution=resolutions),
-        aggregated = expand("results/aggregated/tree-raw_{lineage}_genome_{resolution}.nwk", lineage=lineages, resolution=resolutions)
+        auspice_aggregated_tree = expand("auspice/seattle_flu_seasonal_{lineage}_genome_{resolution}_tree.json", lineage=lineages, resolution=resolutions),
+        auspice_aggregated_meta = expand("auspice/seattle_flu_seasonal_{lineage}_genome_{resolution}_meta.json", lineage=lineages, resolution=resolutions)
 
 rule files:
     params:
@@ -499,8 +505,6 @@ rule export:
     output:
         auspice_tree = "auspice/seattle_flu_seasonal_{lineage}_{segment}_{resolution}_tree.json",
         auspice_meta = "auspice/seattle_flu_seasonal_{lineage}_{segment}_{resolution}_meta.json"
-    wildcard_constraints:
-        segment = "\S\S"
     shell:
         """
         augur export \
