@@ -34,7 +34,11 @@ rule files:
 files = rules.files.params
 
 rule download_background_seqmeta:
-    message: "Downloading background sequences from fauna"
+    message:
+        """
+        download_background_seqmeta: Downloading background sequences from fauna
+        {wildcards.lineage} {wildcards.segment}
+        """
     output:
         seqmeta = "data/background_seqmeta_{lineage}_{segment}.fasta"
     params:
@@ -52,7 +56,11 @@ rule download_background_seqmeta:
         """
 
 rule parse_background_seqmeta:
-    message: "Parsing fasta into sequences and metadata"
+    message:
+        """
+        parse_background_seqmeta: Parsing fasta into sequences and metadata
+        {wildcards.lineage} {wildcards.segment}
+        """
     input:
         seqmeta = rules.download_background_seqmeta.output.seqmeta
     output:
@@ -70,7 +78,11 @@ rule parse_background_seqmeta:
         """
 
 rule download_seattle_sequences:
-    message: "Downloading Seattle sequences from fauna"
+    message:
+        """
+        download_seattle_sequences: Downloading Seattle sequences from fauna
+        {wildcards.lineage} {wildcards.segment}
+        """
     output:
         sequences = "data/seattle_sequences_{lineage}_{segment}.fasta"
     params:
@@ -87,7 +99,11 @@ rule download_seattle_sequences:
         """
 
 rule concat_sequences:
-    message: "Concatenating background and Seattle sequences"
+    message:
+        """
+        concat_sequences: Concatenating background and Seattle sequences
+        {wildcards.lineage} {wildcards.segment}
+        """
     input:
         background_sequences = rules.parse_background_seqmeta.output.sequences,
         seattle_sequences = rules.download_seattle_sequences.output.sequences
@@ -99,7 +115,11 @@ rule concat_sequences:
         """
 
 rule concat_metadata:
-    message: "Concatenating background and Seattle metadata"
+    message:
+        """
+        concat_metadata: Concatenating background and Seattle metadata
+        {wildcards.lineage} {wildcards.segment}
+        """
     input:
         background_metadata = rules.parse_background_seqmeta.output.metadata,
         seattle_metadata = files.seattle_metadata
@@ -117,10 +137,12 @@ rule concat_metadata:
 rule filter:
     message:
         """
-        Filtering {wildcards.lineage} {wildcards.segment} sequences:
+        filter: Filtering {wildcards.lineage} {wildcards.segment} sequences:
           - less than {params.min_length} bases
           - outliers
-          - samples with missing region and country metadata
+          - samples with missing region metadata
+          - egg-passaged samples
+        {wildcards.lineage} {wildcards.segment}
         """
     input:
         sequences = rules.concat_sequences.output.sequences,
@@ -145,8 +167,8 @@ rule filter:
 rule select_strains:
     message:
         """
-        Selecting Strains (scripts/select_strains.py)
-        This automatically includes all strains with region=seattle
+        select_strains: Subsampling background strains, but include all strains with region=seattle
+        {wildcards.lineage} {wildcards.resolution}
         """
     input:
         sequences = expand("results/filtered_{{lineage}}_{segment}.fasta", segment=segments),
@@ -172,7 +194,8 @@ rule select_strains:
 rule extract:
     message:
         """
-        Extract sequences from a given FASTA file that match the given list of sample names
+        extract: Extract sequences from a given FASTA file that match the given list of sample names
+        {wildcards.lineage} {wildcards.segment} {wildcards.resolution}
         """
     input:
         sequences = rules.filter.output.sequences,
@@ -190,8 +213,9 @@ rule extract:
 rule align:
     message:
         """
-        Aligning sequences to {input.reference}
+        align: Aligning sequences to {input.reference}
           - filling gaps with N
+        {wildcards.lineage} {wildcards.segment} {wildcards.resolution}
         """
     input:
         sequences = rules.extract.output.sequences,
@@ -210,7 +234,11 @@ rule align:
         """
 
 rule tree:
-    message: "Building tree"
+    message:
+        """
+        tree: Building tree
+        {wildcards.lineage} {wildcards.segment} {wildcards.resolution}
+        """
     input:
         alignment = rules.align.output.alignment
     output:
@@ -239,11 +267,12 @@ def clock_rate(w):
 rule refine:
     message:
         """
-        Refining tree
+        refine: Refining tree
           - estimate timetree
           - use {params.coalescent} coalescent timescale
           - estimate {params.date_inference} node dates
           - filter tips more than {params.clock_filter_iqd} IQDs from clock expectation
+        {wildcards.lineage} {wildcards.segment} {wildcards.resolution}
         """
     input:
         tree = rules.tree.output.tree,
@@ -274,7 +303,11 @@ rule refine:
         """
 
 rule ancestral:
-    message: "Reconstructing ancestral sequences and mutations"
+    message:
+        """
+        ancestral: Reconstructing ancestral sequences and mutations
+        {wildcards.lineage} {wildcards.segment} {wildcards.resolution}
+        """
     input:
         tree = rules.refine.output.tree,
         alignment = rules.align.output
@@ -292,7 +325,11 @@ rule ancestral:
         """
 
 rule translate:
-    message: "Translating amino acid sequences"
+    message:
+        """
+        translate: Translating amino acid sequences
+        {wildcards.lineage} {wildcards.segment} {wildcards.resolution}
+        """
     input:
         tree = rules.refine.output.tree,
         node_data = rules.ancestral.output.node_data,
@@ -311,7 +348,8 @@ rule translate:
 rule traits:
     message:
         """
-        Inferring ancestral traits for {params.columns!s}
+        traits: Inferring traits for {params.columns!s}
+        {wildcards.lineage} {wildcards.segment} {wildcards.resolution}
         """
     input:
         tree = rules.refine.output.tree,
@@ -337,7 +375,11 @@ def _get_clades_file_for_wildcards(wildcards):
         return "results/clades_%s_ha_%s.json"%(wildcards.lineage, wildcards.resolution)
 
 rule clades:
-    message: "Annotating clades"
+    message:
+        """
+        clades: Annotating clades
+        {wildcards.lineage} {wildcards.segment} {wildcards.resolution}
+        """
     input:
         tree = "results/tree_{lineage}_ha_{resolution}.nwk",
         nt_muts = rules.ancestral.output,
@@ -363,7 +405,11 @@ rule clades:
             """)
 
 rule lbi:
-    message: "Calculating LBI"
+    message:
+        """
+        lbi: Calculating segment LBI
+        {wildcards.lineage} {wildcards.segment} {wildcards.resolution}
+        """
     input:
         tree = rules.refine.output.tree,
         branch_lengths = rules.refine.output.node_data
@@ -387,7 +433,8 @@ rule lbi:
 rule hamming_distance:
     message:
         """
-        Calculating hamming distance for {wildcards.lineage} {wildcards.segment} {wildcards.resolution}
+        hamming_distance: Calculating segment hamming distance
+        {wildcards.lineage} {wildcards.segment} {wildcards.resolution}
         """
     input:
         aligned = rules.align.output.alignment
@@ -399,7 +446,11 @@ rule hamming_distance:
         """
 
 rule clustering:
-    message: "Identifying clusters based on connected components"
+    message:
+        """
+        clustering: Identifying clusters based on connected components
+        {wildcards.lineage} {wildcards.resolution}
+        """
     input:
         nt_muts = expand("results/nt-muts_{{lineage}}_{segment}_{{resolution}}.json", segment=segments),
     params:
@@ -433,6 +484,11 @@ def _get_node_data_for_export(wildcards):
     return inputs
 
 rule export:
+    message:
+        """
+        export: Exporting Ausice JSONs
+        {wildcards.lineage} {wildcards.segment} {wildcards.resolution}
+        """
     input:
         tree = rules.refine.output.tree,
         metadata = rules.concat_metadata.output.metadata,
@@ -459,7 +515,11 @@ rule export:
         """
 
 checkpoint clusters_fasta:
-    message: "Creating directory of fasta files of full-genome clusters"
+    message:
+        """
+        clusters_fasta: Creating directory of fasta files of full-genome clusters
+        {wildcards.lineage} {wildcards.resolution}
+        """
     input:
         clusters = rules.clustering.output.node_data,
         nt_muts = expand("results/nt-muts_{{lineage}}_{segment}_{{resolution}}.json", segment=segments),
@@ -479,6 +539,11 @@ checkpoint clusters_fasta:
         """
 
 rule clusters_intermediate:
+    message:
+        """
+        clusters_intermediate: Copying cluster fastas
+        {wildcards.lineage} {wildcards.resolution} {wildcards.cluster}
+        """
     input:
         "results/clusters/pre_{lineage}_genome_{resolution}/{cluster}.fasta"
     output:
@@ -487,7 +552,11 @@ rule clusters_intermediate:
         "cp {input} {output}"
 
 rule reference_genome:
-    message: "Creating full-genome reference genbank file."
+    message:
+        """
+        reference_genome: Creating full-genome reference genbank file
+        {wildcards.lineage}
+        """
     input:
         references = expand("config/reference_{{lineage}}_{segment}.gb", segment=segments)
     params:
@@ -505,7 +574,8 @@ rule reference_genome:
 rule align_clusters:
     message:
         """
-        Aligning sequences, keep reference
+        align_clusters: Aligning sequences, keep reference
+        {wildcards.lineage} {wildcards.resolution} {wildcards.cluster}
         """
     input:
         sequences = rules.clusters_intermediate.output,
@@ -523,7 +593,11 @@ rule align_clusters:
         """
 
 rule tree_clusters:
-    message: "Building tree for each cluster"
+    message:
+        """
+        tree_clusters: Building tree for each cluster
+        {wildcards.lineage} {wildcards.resolution} {wildcards.cluster}
+        """
     input:
         alignment = rules.align_clusters.output.alignment
     output:
@@ -539,7 +613,8 @@ rule tree_clusters:
 rule refine_clusters:
     message:
         """
-        Refining tree, reroot to reference, don't produce timetree
+        refine_clusters: Refining tree, reroot to reference, don't produce timetree
+        {wildcards.lineage} {wildcards.resolution} {wildcards.cluster}
         """
     input:
         tree = rules.tree_clusters.output.tree,
@@ -569,6 +644,11 @@ def aggregate_trees(wildcards):
            cluster=glob_wildcards(os.path.join(checkpoint_output, "{cluster}.fasta")).cluster)
 
 rule aggregate_cluster_trees:
+    message:
+        """
+        aggregate_cluster_trees: merging individual cluster trees
+        {wildcards.lineage} {wildcards.resolution}
+        """
     input:
         trees = aggregate_trees
     output:
@@ -591,7 +671,11 @@ def aggregate_alignments(wildcards):
            cluster=glob_wildcards(os.path.join(checkpoint_output, "{cluster}.fasta")).cluster)
 
 rule align_aggregated:
-    message: "Concatenates clusters alignment into single fasta file."
+    message:
+        """
+        align_aggregated: Concatenates clusters alignment into single fasta file
+        {wildcards.lineage} {wildcards.resolution}
+        """
     input:
         alignments = aggregate_alignments
     output:
@@ -602,12 +686,13 @@ rule align_aggregated:
 rule refine_aggregated:
     message:
         """
-        Refining aggregate tree
+        refine_aggregated: Refining aggregate tree
           - estimate timetree
           - use {params.coalescent} coalescent timescale
           - estimate {params.date_inference} node dates
           - filter tips more than {params.clock_filter_iqd} IQDs from clock expectation
-          - Does not reroot
+          - Do not reroot
+        {wildcards.lineage} {wildcards.resolution}
         """
     input:
         tree = rules.aggregate_cluster_trees.output.tree,
@@ -637,7 +722,11 @@ rule refine_aggregated:
         """
 
 rule ancestral_aggregated:
-    message: "Reconstructing ancestral sequences and mutations for aggregated trees"
+    message:
+        """
+        ancestral_aggregated: Reconstructing ancestral sequences and mutations for aggregated trees
+        {wildcards.lineage} {wildcards.resolution}
+        """
     input:
         tree = rules.refine_aggregated.output.tree,
         alignment = rules.align_aggregated.output.aggregated_alignment
@@ -655,7 +744,11 @@ rule ancestral_aggregated:
         """
 
 rule translate_aggregated:
-    message: "Translating amino acid sequences for aggregated trees"
+    message:
+        """
+        translate_aggregated: Translating amino acid sequences for aggregated trees
+        {wildcards.lineage} {wildcards.resolution}
+        """
     input:
         tree = rules.refine_aggregated.output.tree,
         node_data = rules.ancestral_aggregated.output.node_data,
@@ -674,7 +767,8 @@ rule translate_aggregated:
 rule traits_aggregated:
     message:
         """
-        Inferring ancestral traits for {params.columns!s}
+        traits_aggregated: Inferring ancestral traits for {params.columns!s}
+        {wildcards.lineage} {wildcards.resolution}
         """
     input:
         tree = rules.refine_aggregated.output.tree,
@@ -709,6 +803,11 @@ def _get_node_data_for_export_aggregated(wildcards):
     return inputs
 
 rule export_aggregated:
+    message:
+        """
+        export_aggregated: Exporting Ausice JSONs
+        {wildcards.lineage} {wildcards.resolution}
+        """
     input:
         tree = rules.refine_aggregated.output.tree,
         metadata = "data/metadata_{lineage}_ha.tsv",
