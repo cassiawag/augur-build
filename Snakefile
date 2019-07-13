@@ -443,6 +443,8 @@ rule export:
     output:
         auspice_tree = "auspice/seattle_flu_seasonal_{lineage}_{segment}_{resolution}_tree.json",
         auspice_meta = "auspice/seattle_flu_seasonal_{lineage}_{segment}_{resolution}_meta.json"
+    wildcard_constraints:
+        segment = "\S\S"
     shell:
         """
         augur export \
