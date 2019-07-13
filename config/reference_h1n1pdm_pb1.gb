@@ -63,11 +63,6 @@ FEATURES             Location/Qualifiers
                      CNPLNPFVSHKEIDSVNNAVVMPAHGPAKSMEYDAVATTHSWIPKRNRSILNTSQRGI
                      LEDEQMYQKCCNLFEKFFPSSSYRRPVGISSMVEAMVSRARIDARVDFESGRIKKEEF
                      SEIMKICSTIEELRRQK"
-     gene            107..379
-                     /gene="PB1-F2"
-     misc_feature    107..379
-                     /gene="PB1-F2"
-                     /note="nonfunctional PB1-F2 protein due to mutation"
 ORIGIN      
         1 caaaccattt gaatggatgt caatccgact ctacttttcc taaaaattcc agcgcaaaat
        61 gccataagca ccacattccc ttatactgga gatcctccat acagccatgg aacaggaaca

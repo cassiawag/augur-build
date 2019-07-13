@@ -63,15 +63,6 @@ FEATURES             Location/Qualifiers
                      EIESVNNAVVMPAHGPAKSMEYDAVATTHSWIPKRNRSILNTSQRGILEDEQMYQKCCN
                      LFEKFFPSSSYRRPVGISSMVEAMVSRARIDARIDFESGRIKKEEFSEIMKICSTIEEL
                      RRQK"
-     gene            104..376
-                     /gene="PB1-F2"
-     CDS             104..376
-                     /codon_start=1
-                     /gene="PB1-F2"
-                     /product="PB1-F2 protein"
-                     /protein_id="AFG99686.1"
-                     /translation="MEQEQDTPWTQSTEHINIQKGGSGQQTQKLGHPNSTRLMDHYPRI
-                     MSQVDMHKQTVFWRPWLSLRNPTQGSLRTHALRQWKSFNKQGWTN"
 ORIGIN
         1 accatttgaa tggatgtcaa tccgactcta cttttcctaa aggttccagc tcaaaatgcc
        61 ataagcacca cattccctta tactggagat cctccataca gccatggaac aggaacagga
