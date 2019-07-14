@@ -56,6 +56,12 @@
       "legendTitle": "Site category",
       "menuItem": "site category",
       "type": "discrete"
+    },
+    "site_type": {
+      "key": "site_type",
+      "legendTitle": "Site type",
+      "menuItem": "site type",
+      "type": "discrete"
     }
   },
   "geo": [
@@ -75,7 +81,8 @@
     "clade_membership",
     "region",
     "age_category",
-    "site_category"
+    "site_category",
+    "site_type"
   ],
   "panels": [
     "tree",
