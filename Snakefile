@@ -34,6 +34,7 @@ rule files:
         outliers = "config/outliers_{lineage}.txt",
         references = "config/references_{lineage}.txt",
         reference = "config/reference_{lineage}_{segment}.gb",
+        exclude_sites_genome = "config/exclude-sites_{lineage}_genome.txt",
         colors = "config/colors.tsv",
         lat_longs = "config/lat_longs.tsv",
         auspice_config = "config/auspice_config_{lineage}.json",
@@ -604,7 +605,8 @@ rule tree_clusters:
         {wildcards.lineage} {wildcards.resolution} {wildcards.cluster}
         """
     input:
-        alignment = rules.align_clusters.output.alignment
+        alignment = rules.align_clusters.output.alignment,
+        exclude_sites = files.exclude_sites_genome
     output:
         tree = "results/clusters/tree-raw_{lineage}_genome_{resolution}/{cluster}.nwk"
     shell:
@@ -612,7 +614,8 @@ rule tree_clusters:
         augur tree \
             --alignment {input.alignment} \
             --output {output.tree} \
-            --nthreads 1
+            --nthreads 1 \
+            --exclude-sites {input.exclude_sites}
         """
 
 rule refine_clusters:
