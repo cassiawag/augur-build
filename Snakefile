@@ -185,7 +185,7 @@ rule select_strains:
     output:
         strains = "results/strains_{lineage}_{resolution}.txt",
     params:
-        viruses_per_month = 80
+        viruses_per_month = 160
     shell:
         """
         python3 scripts/select_strains.py \
