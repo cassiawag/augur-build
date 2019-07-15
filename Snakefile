@@ -875,7 +875,7 @@ rule export_aggregated:
         auspice_config = files.auspice_config,
         node_data = _get_node_data_for_export_aggregated
     output:
-        auspice_tree = "auspice/seattle_flu_seasonal_{lineage}_genome_{resolution}_tree.json",
+        auspice_tree = "results/aggregated/seattle_flu_seasonal_{lineage}_genome_{resolution}_tree.json",
         auspice_meta = "auspice/seattle_flu_seasonal_{lineage}_genome_{resolution}_meta.json"
     shell:
         """
@@ -888,6 +888,23 @@ rule export_aggregated:
             --auspice-config {input.auspice_config} \
             --output-tree {output.auspice_tree} \
             --output-meta {output.auspice_meta}
+        """
+
+rule hide_nodes_aggregated:
+    message:
+        """
+        hide_nodes_aggregated: Hide basal reassortant nodes in auspice JSON
+        {wildcards.lineage} {wildcards.resolution}
+        """
+    input:
+        auspice_tree = rules.export_aggregated.output.auspice_tree
+    output:
+        auspice_tree = "auspice/seattle_flu_seasonal_{lineage}_genome_{resolution}_tree.json"
+    shell:
+        """
+        python scripts/annotate_hidden_nodes.py \
+            --input {input.auspice_tree} \
+            --output {output.auspice_tree}
         """
 
 rule clean:

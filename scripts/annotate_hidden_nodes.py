@@ -1,14 +1,13 @@
 """
-    Given auspice-ready JSONs (i.e. from `augur export`) and a node--data JSON
-    which defines which nodes should be hidden, produce an auspice-compatable
-    JSON which hides these nodes (exploded-tree-like).
+    Given auspice-ready JSONs (i.e. from `augur export`) produce an
+    auspice-compatable JSON which hides nodes that are basal to monophyletic
+    clusters (as defined by the 'cluster' node attribute).
     NOTE: as of augur v6 this capability will be build into `augur export`
     NOTE: designed to work with augur v5 & auspice v1
     original author: James Hadfield                                 July 2019
 """
 import argparse
 import json
-
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -21,10 +20,10 @@ def parse_args():
 
 
 def post_order_traversal_iterative(tree, fn):
-    s1 = [tree] 
+    s1 = [tree]
     s2 = [] # Items added in postorder
 
-    # Run while first stack is not empty 
+    # Run while first stack is not empty
     while s1:
         node = s1.pop()
         s2.append(node)
@@ -43,15 +42,15 @@ def get_cluster(node):
         return False
 
 def make_stub(node):
-    
-    if "cluster" not in node["attr"] or node["attr"]["cluster"] == False:
+
+    if "cluster" not in node["attr"] or not node["attr"]["cluster"]:
         return node
 
     stub = {
         "strain": "stub_{}".format(get_cluster(node)),
         "attr": {
-            "num_date": node["attr"]["num_date"],
-            "div": node["attr"]["div"]
+            "num_date": node["attr"]["num_date"] - 0.05,
+            "div": node["attr"]["div"] - 0.0002
         },
         "hidden": "always",
         "children": [node],
@@ -78,7 +77,7 @@ def mark_clusters_as_hidden(node):
 def flatten_tree(tree):
     flat = []
     stack = [tree]
-    while(len(stack) > 0):  
+    while len(stack) > 0:
         node = stack.pop()
         flat.append(node)
         if "children" in node:
@@ -101,6 +100,7 @@ def shift_hidden_div_and_time(flat_tree):
     min_date = min([n["attr"]["num_date"] for n in flat_tree if get_cluster(n)])
     min_div = min([n["attr"]["div"] for n in flat_tree if get_cluster(n)]) # cumulative!
     for n in flat_tree:
+        n['attr']['clade_annotation'] = None # remove clade labels so there isn't floating text
         if n["attr"]["num_date"] < min_date:
             n["attr"]["num_date"] = min_date
             if "num_date_confidence" in n["attr"]:
