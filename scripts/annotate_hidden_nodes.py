@@ -126,7 +126,7 @@ def shift_hidden_div_and_time(flat_tree):
     # modify clusters to each have divergence starting from 0
     for n in flat_tree:
         cluster = get_cluster(n)
-        if hasattr(n, "hidden"):
+        if "hidden" in n:
             n["attr"]["div"] = 0
         elif cluster:
             n["attr"]["div"] -= min_div_per_cluster[cluster]
