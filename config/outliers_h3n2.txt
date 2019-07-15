@@ -37,6 +37,7 @@ A/Corsica/39/2009
 A/Corsica/42/2009
 A/Delaware/3/2011
 A/Delaware/33/2017
+A/DistrictOfColumbia/1/2017
 A/DistrictOfColumbia/2/2017
 A/Guam/AF2771/2011
 A/Guatemala/116/2018
@@ -214,6 +215,7 @@ A/Maryland/51/2017
 A/Maryland/52/2017
 A/Maryland/54/2017
 A/Maryland/55/2017
+A/Maryland/58/2017
 A/Maryland/59/2017
 A/Maryland/60/2017
 A/Maryland/61/2017
@@ -226,7 +228,9 @@ A/Maryland/69/2017
 A/Maryland/70/2017
 A/Maryland/71/2017
 A/Maryland/72/2017
+A/Maryland/74/2017
 A/Maryland/75/2017
+A/Maryland/76/2017
 A/Maryland/77/2017
 A/Maryland/78/2017
 A/Maryland/79/2017
@@ -254,6 +258,7 @@ A/Minnesota/11/2010-egg
 A/Minnesota/11/2012
 A/Minnesota/15/2012
 A/Nanjing/1/2010
+A/Nebraska/11/2017
 A/Nepal/142/2011
 A/NewJersey/53/2015
 A/NorthDakota/19/2017
