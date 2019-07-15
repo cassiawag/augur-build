@@ -4,13 +4,17 @@ if os.environ.get('FAUNA_PATH'):
 
 segments = ['ha', 'na', 'pb2', 'pb1', 'pa', 'np', 'mp', 'ns']
 lineages = ['h3n2', 'h1n1pdm']
-resolutions = ['2y']
+resolutions = ['1y', '2y']
 
 wildcard_constraints:
     lineage = "[A-Za-z0-9]{3,7}",
     segment = "[A-Za-z0-9]{2,3}",
     resolution = "[A-Za-z0-9]{2}",
     cluster = "[A-Za-z0-9]{8,10}"
+
+def viruses_per_month(wildcards):
+    vpm = {'1y': 320, '2y': 160} # should be a multiple of 16
+    return vpm[wildcards.resolution]
 
 def reference_strain(wildcards):
     references = {
@@ -185,7 +189,7 @@ rule select_strains:
     output:
         strains = "results/strains_{lineage}_{resolution}.txt",
     params:
-        viruses_per_month = 160
+        viruses_per_month = viruses_per_month
     shell:
         """
         python3 scripts/select_strains.py \

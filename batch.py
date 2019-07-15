@@ -12,7 +12,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run flu builds on aws', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--system', type = str, default = 'local', help='where to run, local or batch')
     parser.add_argument('-l', '--lineages', nargs='+', type = str,  help ="flu lineages to include", default=['h3n2', 'h1n1pdm'])
-    parser.add_argument('-r', '--resolutions', nargs='+', type = str,  help ="flu resolutions to include", default=['2y'])
+    parser.add_argument('-r', '--resolutions', nargs='+', type = str,  help ="flu resolutions to include", default=['1y', '2y'])
     parser.add_argument('-s', '--segments', nargs='+', type = str, help ="flu segments to include", default=['genome', 'ha', 'na', 'pb2', 'pb1', 'pa', 'np', 'mp', 'ns'])
     params = parser.parse_args()
 
