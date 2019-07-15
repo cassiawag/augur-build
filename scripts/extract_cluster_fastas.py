@@ -44,29 +44,33 @@ def sequences(clusters, files):
     return clusters
 
 '''
-Filters clusters to only those that contain at least one strain from Seattle
+Filters clusters to only those that contain at least one strain from selected regions
+if region not selected, then it just returns the above clusters
 '''
-def filter_to_seattle(metadata_file, clusters):
-    strains_seattle_list = []
-    cluster_seattle = []
-    final_clusters = {}
-    for mfname in metadata_file:
-        with open(mfname) as mfile:
-            meta_file = pd.read_csv(mfile, sep='\t')
-            meta_strains_seattle = meta_file[meta_file["region"] == 'seattle']
-            strains_seattle_list = meta_strains_seattle.loc[:,'strain'].tolist()
+def filter_to_region(clusters, metadata_file = None, region = None):
+    if region is None:
+        return clusters
+    else:
+        strains_region_list = []
+        cluster_region = []
+        final_clusters = {}
+        for mfname in metadata_file:
+            with open(mfname) as mfile:
+                meta_file = pd.read_csv(mfile, sep='\t')
+                meta_strains_region = meta_file[meta_file["region"] == str(region)]
+                strains_region_list = meta_strains_region.loc[:,'strain'].tolist()
 
-    for cluster, strain_att in clusters.items():
-        check = any(strain in strain_att.keys() for strain in strains_seattle_list)
-        if check:
-            cluster_seattle.append(cluster)
+        for cluster, strain_att in clusters.items():
+            check = any(strain in strain_att.keys() for strain in strains_region_list)
+            if check:
+                cluster_region.append(cluster)
 
-    final_clusters = clusters.copy()
+        final_clusters = clusters.copy()
 
-    for cluster in clusters.keys():
-        if cluster not in cluster_seattle:
-            del final_clusters[cluster]
-    return final_clusters
+        for cluster in clusters.keys():
+            if cluster not in cluster_region:
+                del final_clusters[cluster]
+        return final_clusters
 
 '''
 Outputs python dictionary sequences into fasta files
@@ -89,7 +93,8 @@ if __name__ == '__main__':
 
     parser.add_argument('--clusters', type = str, required = True, help = "cluster JSON files")
     parser.add_argument('--nt-muts', nargs = '+', type = str, required = True, help = "list of nt-muts JSON files")
-    parser.add_argument('--metadata', nargs = '+', type = str, required = True, help = "metadata of strains, one for each segment")
+    parser.add_argument('--metadata', nargs = '+', type = str, help = "metadata of strains, one for each segment")
+    parser.add_argument('--filter-to-region', type = str, help = 'filters to clusters only containing strains from that region')
     parser.add_argument('--min-size', type = int, default = 2, help = "Minimum number of strains in cluster. Default is 2.")
     parser.add_argument('--output-dir', type = str, required = True, help = "output directory")
     args = parser.parse_args()
@@ -100,8 +105,8 @@ if __name__ == '__main__':
     # Makes sequences dictionary
     cluster_seq_dict = sequences(cluster_dict, args.nt_muts)
 
-    #filters for clusters with seattle strains
-    seattle_clus = filter_to_seattle(args.metadata, cluster_seq_dict)
+    #filters for clusters with region strains
+    region_clus = filter_to_region( cluster_seq_dict, metadata_file = args.metadata, region = args.filter_to_region)
 
     # Outputs fasta files
-    export_genomes(seattle_clus, args.output_dir)
+    export_genomes(region_clus, args.output_dir)
