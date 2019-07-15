@@ -28,6 +28,11 @@ def concat(files, reference):
     #Adds source feature to Genbank file for the full-length of genome.
     source_feature = flu_ref.features[0]
     full_genome_feature = SeqFeature(FeatureLocation(0, len(flu_ref), strand = 1), type = "source", qualifiers = source_feature.qualifiers)
+    #Removes qualifiers that don't apply to the entire sequence.
+    if "segment" in full_genome_feature.qualifiers.keys():
+        del full_genome_feature.qualifiers["segment"]
+    if "lab_host" in full_genome_feature.qualifiers.keys():
+        del full_genome_feature.qualifiers["lab_host"]
     flu_ref.features.insert(0, full_genome_feature)
 
     return flu_ref
