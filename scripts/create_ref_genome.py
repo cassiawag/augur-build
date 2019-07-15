@@ -3,6 +3,7 @@ Concatenates segment reference genbank files into a genome reference genbank fil
 '''
 import argparse
 from Bio import SeqIO
+from Bio.SeqFeature import SeqFeature, FeatureLocation
 
 '''
 Creates full-genome Bio Seq object
@@ -23,6 +24,12 @@ def concat(files, reference):
 
     flu_ref.description = reference
     flu_ref.id = reference
+
+    #Adds source feature to Genbank file for the full-length of genome.
+    source_feature = flu_ref.features[0]
+    full_genome_feature = SeqFeature(FeatureLocation(0, len(flu_ref), strand = 1), type = "source", qualifiers = source_feature.qualifiers)
+    flu_ref.features.insert(0, full_genome_feature)
+
     return flu_ref
 
 if __name__ == '__main__':
