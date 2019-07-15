@@ -531,7 +531,8 @@ checkpoint clusters_fasta:
         nt_muts = expand("results/nt-muts_{{lineage}}_{segment}_{{resolution}}.json", segment=segments),
         metadata = expand("data/metadata_{{lineage}}_{segment}.tsv", segment = segments)
     params:
-        min_size = 2
+        min_size = 2,
+        filter_to_region = "seattle"
     output:
         dir = directory("results/clusters/pre_{lineage}_genome_{resolution}")
     shell:
@@ -541,6 +542,7 @@ checkpoint clusters_fasta:
             --nt-muts {input.nt_muts} \
             --metadata {input.metadata} \
             --min-size {params.min_size} \
+            --filter-to-region {params.filter_to_region} \
             --output-dir {output.dir}
         """
 
