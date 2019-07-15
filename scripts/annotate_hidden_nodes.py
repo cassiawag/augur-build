@@ -50,7 +50,8 @@ def make_stub(node):
         "strain": "stub_{}".format(get_cluster(node)),
         "attr": {
             "num_date": node["attr"]["num_date"] - 0.05,
-            "div": node["attr"]["div"] - 0.0002
+            "div": node["attr"]["div"] - 0.0002,
+            "cluster": node["attr"]["cluster"]
         },
         "hidden": "always",
         "children": [node],
@@ -96,19 +97,39 @@ def shift_hidden_div_and_time(flat_tree):
 
         This uses the trick that both flat_tree & tree contain references
         to the same object, so modifications to one can affect the other
+
+        Note: plenty of optimisation potential here
     """
-    min_date = min([n["attr"]["num_date"] for n in flat_tree if get_cluster(n)])
-    min_div = min([n["attr"]["div"] for n in flat_tree if get_cluster(n)]) # cumulative!
+    # remove clade labels so there isn't floating text
     for n in flat_tree:
-        n['attr']['clade_annotation'] = None # remove clade labels so there isn't floating text
+        n['attr']['clade_annotation'] = None
+
+    # find the date of the earliest node which has a cluster and modify all
+    # nodes earlier than that to have that date
+    min_date = min([n["attr"]["num_date"] for n in flat_tree if get_cluster(n)])
+    for n in flat_tree:
         if n["attr"]["num_date"] < min_date:
             n["attr"]["num_date"] = min_date
             if "num_date_confidence" in n["attr"]:
                 del n["attr"]["num_date_confidence"]
-        if n["attr"]["div"] < min_div:
+
+    # find the min divergence (cumulative!) for each cluster
+    min_div_per_cluster = {}
+    for n in flat_tree:
+        cluster = get_cluster(n)
+        if cluster:
+            if cluster not in min_div_per_cluster:
+                min_div_per_cluster[cluster] = n["attr"]["div"]
+            elif n["attr"]["div"] < min_div_per_cluster[cluster]:
+                min_div_per_cluster[cluster] = n["attr"]["div"]
+
+    # modify clusters to each have divergence starting from 0
+    for n in flat_tree:
+        cluster = get_cluster(n)
+        if hasattr(n, "hidden"):
             n["attr"]["div"] = 0
-        else:
-            n["attr"]["div"] -= min_div
+        elif cluster:
+            n["attr"]["div"] -= min_div_per_cluster[cluster]
 
 
 if __name__ == '__main__':
