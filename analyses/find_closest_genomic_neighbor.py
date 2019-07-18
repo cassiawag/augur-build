@@ -61,17 +61,21 @@ def genetic_distance (files, mapping, strain_list):
                         genetic_distance[strainA.name] = distance_hold
     return genetic_distance
 
-def write_histo(gen_dis_dict, histo = "analyses/genetic_distance_seattle.png", table = "analyses/genetic_distance_h3n2.tsv"):
+def write_histo(gen_dis_dict, histo = "analyses/genetic_distance_h3n2_seattle.png", table = "analyses/genetic_distance_h3n2.tsv"):
     if table != None:
         mydict = [gen_dis_dict]
         with open(table, 'w') as fh:
             pd.DataFrame(mydict).to_csv(fh, sep='\t')
     if histo != None:
         fig, ax1 = plt.subplots(figsize = (15,15))
-        ax1.hist(gen_dis_dict.values(),bins = len(gen_dis_dict.values()),width = 0.6, align = 'left', color='g')
-        plt.xlabel('distance in # of (nucleotides)', size = '20')
-        plt.ylabel('count', size = '20')
-        plt.title('Genetic Distance to Closest Sample for Seattle H3N2 Flu Strains', size = '25')
+        ax1.hist(gen_dis_dict.values(),bins = len(gen_dis_dict.values()),width = 0.6, align = 'left', color="#4C90C0")
+        plt.xlabel('distance (# of nucleotides)', size = '30')
+        plt.ylabel('count', size = '30')
+        ax1.spines['right'].set_visible(False)
+        ax1.spines['top'].set_visible(False)
+        ax1.tick_params(axis='both', which='major', labelsize=27)
+        ax1.tick_params(axis='both', which='minor', labelsize=27)
+        plt.title('Genetic Distance to Closest Sample for Seattle H3N2 Flu Strains', size = '38')
         fig.savefig(histo)
         plt.close()
 
