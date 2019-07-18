@@ -62,6 +62,12 @@
       "legendTitle": "Site type",
       "menuItem": "site type",
       "type": "discrete"
+    },
+    "flu_shot": {
+      "key": "flu_shot",
+      "legendTitle": "Vaccinated",
+      "menuItem": "vaccinated",
+      "type": "discrete"
     }
   },
   "geo": [
@@ -82,7 +88,8 @@
     "region",
     "age_category",
     "site_category",
-    "site_type"
+    "site_type",
+    "flu_shot"
   ],
   "panels": [
     "tree",
