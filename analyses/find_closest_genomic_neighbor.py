@@ -3,11 +3,10 @@
 
 # In[ ]:
 
-
+import argparse
 import pandas as pd
 from Bio import SeqIO
 import numpy as np
-import argparse
 import matplotlib as mpl
 from matplotlib import pyplot as plt
 
@@ -48,7 +47,7 @@ def mapping_sequences(files):
                 mapping[record.name] = np.concatenate((mapping[record.name], array), axis=0).astype(int)
     return mapping
 
-def genetic_distance (files, mapping, strain_list): 
+def genetic_distance (files, mapping, strain_list):
     '''
     returns dictionary of the lowest genetic distance to the closest sample (from the entire dataset) for each Seattle strain
     '''
@@ -58,16 +57,16 @@ def genetic_distance (files, mapping, strain_list):
             seq_list = list(SeqIO.parse(fasta_file, "fasta"))
             for strainA in seq_list: #strainA is the strain of intrest and should be in region = Seattle
                 distance_hold = None #resets the counters for every strainA
-                strain_neighbor= None
+                strain_neighbor = None
                 for strainB in seq_list:
                     if (strainA.name in strain_list) and (strainA.name != strainB.name):
                         distance = hamming(mapping[strainA.name], mapping[strainB.name])
-                        if (distance_hold == None) or (distance_hold > distance):
+                        if (distance_hold is None) or (distance_hold > distance):
                             distance_hold = distance
                             strain_neighbor = strainB.name
                         genetic_distance[strainA.name] = distance_hold
-    return genetic_distance 
-   
+    return genetic_distance
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -77,15 +76,14 @@ if __name__ == '__main__':
 
     parser.add_argument('--metadata', nargs='+', type=str, required=True, help="metadata per lineage based on HA segment")
     parser.add_argument('--alignment', nargs='+', type=str, required=True, help= "aligned sequences")
-    parser.add_argument('--output', type = str, help="name of the file to write tsv data to")
     args = parser.parse_args()
 
-    strains_in_seattle = seattle_strains(args.metadata) 
-    
+    strains_in_seattle = seattle_strains(args.metadata)
+
     mapping = mapping_sequences(args.alignment)
-    
+
     lowest_genetic_distance = genetic_distance(args.alignment, mapping, strains_in_seattle)
-    
+
     fig, ax1 = plt.subplots(figsize = (15,15))
     ax1.bar(lowest_genetic_distance.keys(), lowest_genetic_distance.values(), align = 'center', color='g')
     plt.ylabel('distance in # of (nucleotides)', size = '20')
@@ -93,5 +91,3 @@ if __name__ == '__main__':
     plt.title('Genetic Distance to Closest Sample for Seattle Flu Strains', size = '25')
     fig.savefig('genetic_distance_seattle.png')
     plt.close()
-    
-
