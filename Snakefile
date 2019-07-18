@@ -369,7 +369,8 @@ rule traits:
     output:
         node_data = "results/traits_{lineage}_{segment}_{resolution}.json",
     params:
-        columns = "region"
+        columns = "region",
+        sampling_bias_correction = 2
     shell:
         """
         augur traits \
@@ -377,7 +378,8 @@ rule traits:
             --metadata {input.metadata} \
             --output {output.node_data} \
             --columns {params.columns} \
-            --confidence
+            --confidence \
+            --sampling-bias-correction {params.sampling_bias_correction}
         """
 
 def _get_clades_file_for_wildcards(wildcards):
@@ -812,7 +814,8 @@ rule traits_aggregated:
     output:
         node_data = "results/aggregated/traits_{lineage}_genome_{resolution}.json",
     params:
-        columns = "region location"
+        columns = "region location",
+        sampling_bias_correction = 2
     shell:
         """
         augur traits \
@@ -820,7 +823,8 @@ rule traits_aggregated:
             --metadata {input.metadata} \
             --output {output.node_data} \
             --columns {params.columns} \
-            --confidence
+            --confidence \
+            --sampling-bias-correction {params.sampling_bias_correction}            
         """
 
 rule lbi_aggregated:
