@@ -7,13 +7,13 @@ def extracting_categories(metadata_file, label):
     '''
     creates a dictionary of all strains where the keys are the label of interest
     '''
-    region_dict = {}
+    cat_dict = {}
     for mname in metadata_file:
         with open(mname) as mfile:
             meta_file = pd.read_csv(mfile, sep='\t')
-            for region, df_region in meta_file.groupby(label):
-                region_dict[region] =  df_region.loc[:,'strain'].tolist()
-    return region_dict
+            for category, df_cat in meta_file.groupby(label):
+                cat_dict[label] =  df_cat.loc[:,'strain'].tolist()
+    return cat_dict
 
 def mapping_sequences(files):
     '''
@@ -46,45 +46,45 @@ def hamming(array1, array2):
     count = min(np.ma.count(array1_mask), np.ma.count(array2_mask))
     return (np.sum(array1_mask != array2_mask))/count
 
-def genetic_distance (region_dict, mapping):
+def genetic_distance (cat_dict, mapping):
     '''
     creates a dictionary for within-category genetic distance and all-category genetic distance
     '''
-    all_region_dict = {}
-    within_region_dict = {}
-    for regionA, strain_list in region_dict.items():
+    all_cat_dict = {}
+    within_cat_dict = {}
+    for catA, strain_list in cat_dict.items():
         for strainA in strain_list:
             for strainB in strain_list:
                 if (strainA != strainB) and (strainA in mapping.keys()) and (strainB in mapping.keys()):
-                    within_region_distance = hamming(mapping[strainA], mapping[strainB])
-                    within_region_dict.setdefault(regionA, []).append(within_region_distance)
+                    within_cat_distance = hamming(mapping[strainA], mapping[strainB])
+                    within_cat_dict.setdefault(catA, []).append(within_cat_distance)
 
-            for regionC, strainC_list in region_dict.items():
+            for catC, strainC_list in cat_dict.items():
                 for strainC in strainC_list:
                     if (strainA != strainC) and (strainA in mapping.keys()) and (strainC in mapping.keys()):
-                        '''if you want to make it within vs. outside, can just add and (regionA != regionC)'''
-                        all_region_distance = hamming(mapping[strainA], mapping[strainC])
-                        all_region_dict.setdefault(regionA, {}).setdefault(regionC,[]).append(all_region_distance)
-    return within_region_dict, all_region_dict
+                        '''if you want to make it within vs. outside, can just add and (catA != catC)'''
+                        all_cat_distance = hamming(mapping[strainA], mapping[strainC])
+                        all_cat_dict.setdefault(catA, {}).setdefault(catC,[]).append(all_cat_distance)
+    return within_cat_dict, all_cat_dict
 
-def calculating_fst(within_region_dict, all_region_dict):
+def calculating_fst(within_cat_dict, all_cat_dict):
     '''
     calculates Fst analogue comparing within category distance with all-category distance
     outputs a TSV file with the results
     '''
     ave_dict = {}
-    for regionA, distancesA in within_region_dict.items():
-        all_region_distances = []
-        region_average = sum(distancesA)/len(distancesA)
-        for regionB, distancesB in all_region_dict[regionA].items():
-            all_region_distances.extend(distancesB)
-        all_region_average = sum(all_region_distances)/len(all_region_distances)
-        ave_dict[regionA] = (region_average, all_region_average)
+    for catA, distancesA in within_cat_dict.items():
+        all_cat_distances = []
+        cat_average = sum(distancesA)/len(distancesA)
+        for catB, distancesB in all_cat_dict[catA].items():
+            all_cat_distances.extend(distancesB)
+        all_cat_average = sum(all_cat_distances)/len(all_cat_distances)
+        ave_dict[catA] = (cat_average, all_cat_average)
 
     final_dict = {}
-    for region, averages in ave_dict.items():
+    for cat, averages in ave_dict.items():
         fst = ((averages[1] - averages[0])/averages[1])
-        final_dict[region] = fst
+        final_dict[cat] = fst
     final = [final_dict]
 
     with open("fst_calculations.tsv", 'w') as fh:
