@@ -4,7 +4,7 @@ if os.environ.get('FAUNA_PATH'):
 
 segments = ['ha', 'na', 'pb2', 'pb1', 'pa', 'np', 'mp', 'ns']
 lineages = ['h3n2', 'h1n1pdm']
-resolutions = ['1y', '2y']
+resolutions = ['1y']
 
 wildcard_constraints:
     lineage = "[A-Za-z0-9]{3,7}",
@@ -824,7 +824,7 @@ rule traits_aggregated:
             --output {output.node_data} \
             --columns {params.columns} \
             --confidence \
-            --sampling-bias-correction {params.sampling_bias_correction}            
+            --sampling-bias-correction {params.sampling_bias_correction}
         """
 
 rule lbi_aggregated:
