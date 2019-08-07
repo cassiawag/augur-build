@@ -1,8 +1,3 @@
-29cea8cb-fa93-4c46-8bbc-3d1a51f26391
-39ff161f-47a4-467d-86f6-eeefafd06ad9
-51de8816-cadd-4a85-92d9-d69fc945f92c
-6baa7ad2-9817-46bf-bc37-d778f6e5d3d5
-96c78497-90f1-4c9f-ba23-fc1eabd0eeae
 A/Asaka/2/2017
 A/Austria/838902/2015
 A/Austria/839669/2015
@@ -40,7 +35,9 @@ A/Delaware/3/2011
 A/Delaware/33/2017
 A/DistrictOfColumbia/1/2017
 A/DistrictOfColumbia/2/2017
+A/Gangwon/11/1999
 A/Guam/AF2771/2011
+A/Guangdong-Duanzhou/1227/2017
 A/Guatemala/116/2018
 A/Hawaii/3/2012
 A/Helsinki/798/2013
@@ -161,6 +158,7 @@ A/Indiana/113/2012
 A/Indiana/115/2012
 A/Indiana/123/2012
 A/Indiana/125/2012
+A/Indiana/126/2012
 A/Indiana/127/2012
 A/Indiana/132/2012
 A/Indiana/135/2012
@@ -262,6 +260,7 @@ A/Minnesota/15/2012
 A/Nanjing/1/2010
 A/Nebraska/11/2017
 A/Nepal/142/2011
+A/Netherlands/233/1982
 A/NewJersey/53/2015
 A/NorthDakota/19/2017
 A/Novosibirsk/1/2019
@@ -362,6 +361,8 @@ A/StPetersburg/5/2009
 A/StPetersburg/5/2009-egg
 A/Sydney/53/2015
 A/Taiwan/937/2009
+A/Tokyo/1/1975
+A/WestVirginia/6/2011
 A/WestVirginia/9/2012
 A/WestVirginia/10/2012
 A/WestVirginia/15/2012
