@@ -28,7 +28,7 @@ def pca_ranking(lat_long_df, location_df, label):
     lat_long_sorted = lat_long_transformed_df.sort_values(by ="pc1")
     return lat_long_sorted
 
-def color_assignment(lat_long_sorted):
+def color_assignment(lat_long_sorted, output_fname):
     #Evenly assigns a color on the Nextstrain 36 color scale
     color_scale = ["#511EA8", "#4928B4", "#4334BF", "#4041C7", "#3F50CC", "#3F5ED0", "#416CCE", "#4379CD", "#4784C7", "#4B8FC1", "#5098B9", "#56A0AF", "#5CA7A4", "#63AC99", "#6BB18E", "#73B583", "#7CB878", "#86BB6E", "#90BC65", "#9ABD5C", "#A4BE56", "#AFBD4F", "#B9BC4A", "#C2BA46", "#CCB742", "#D3B240", "#DAAC3D", "#DFA43B", "#E39B39", "#E68F36", "#E68234", "#E67431", "#E4632E", "#E1512A", "#DF4027", "#DC2F24"]
     counter = 0
@@ -42,7 +42,7 @@ def color_assignment(lat_long_sorted):
 
     #subsets dataframe to only include location and color and prints to tsv
     final_colors_df = lat_long_sorted[['location', 'color']]
-    final_colors_df.to_csv('config/colors_census.tsv', sep='\t', index = False)
+    final_colors_df.to_csv(output_fname, sep='\t', index = False)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -51,7 +51,8 @@ if __name__ == '__main__':
     )
 
     parser.add_argument('--coordinates', type=str, required=True, help="tsv file containing lat/long coordinates and cooresponding region")
-    parser.add_argument('--label', type=str, required=True, help= "geographic entity of interest like region, country or location")
+    parser.add_argument('--label', type=str, required=True, help="geographic entity of interest like region, country or location")
+    parser.add_argument('--output', type=str, required=True, help="name of output file for colors.tsv")
     args = parser.parse_args()
 
     #makes Dataframe mapping of lat_longs file
@@ -61,4 +62,4 @@ if __name__ == '__main__':
     pca_rank = pca_ranking(coor_mapping, original_df, args.label)
 
     #equally distributes colors among the census tracks and outputs a color TSV file
-    color_assignment(pca_rank)
+    color_assignment(pca_rank, args.output)
