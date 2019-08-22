@@ -9,17 +9,17 @@ import os
 
 def get_cpus(jobs):
     count = 1
-    if jobs > 72:
+    if jobs >= 72:
         count = 72
-    elif jobs > 36:
+    elif jobs >= 36:
         count = 36
-    elif jobs > 16:
+    elif jobs >= 16:
         count = 16
-    elif jobs > 8:
+    elif jobs >= 8:
         count = 8
-    elif jobs > 4:
+    elif jobs >= 4:
         count = 4
-    elif jobs > 2:
+    elif jobs >= 2:
         count = 2
     return count
 
