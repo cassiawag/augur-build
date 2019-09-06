@@ -34,7 +34,6 @@ rule all:
 
 rule files:
     params:
-        seattle_metadata = "metadata/seattle_metadata.tsv",
         outliers = "config/outliers_{lineage}.txt",
         references = "config/references_{lineage}.txt",
         reference = "config/reference_{lineage}_{segment}.gb",
@@ -89,6 +88,36 @@ rule parse_background_seqmeta:
             --fields {params.fasta_fields}
         """
 
+rule download_seattle_metadata:
+    message:
+        """
+        download_seattle_metadata: Downloading metadata for Seattle sequences
+        from ID3C
+        """
+    output:
+        metadata = "data/seattle_metadata.tsv"
+    run:
+        import requests
+        import json
+        import csv
+        from urllib.parse import urljoin
+
+        id3c_url = urljoin(os.environ["ID3C_URL"], "v1/shipping/augur-build-metadata")
+        id3c_username = os.environ["ID3C_USERNAME"]
+        id3c_password = os.environ["ID3C_PASSWORD"]
+
+        r = requests.get(id3c_url, auth=(id3c_username, id3c_password), stream=True)
+        stream = r.iter_lines()
+
+        with open(output.metadata, 'w+') as tsv_file:
+            tsv_writer = csv.writer(tsv_file, delimiter='\t')
+            for i, record in enumerate(map(json.loads, stream)):
+                # Write the TSV header
+                if i == 0:
+                    tsv_writer.writerow(record.keys())
+                tsv_writer.writerow(record.values())
+
+
 rule download_seattle_sequences:
     message:
         """
@@ -134,7 +163,7 @@ rule concat_metadata:
         """
     input:
         background_metadata = rules.parse_background_seqmeta.output.metadata,
-        seattle_metadata = files.seattle_metadata
+        seattle_metadata = rules.download_seattle_metadata.output.metadata
     output:
         metadata = "data/metadata_{lineage}_{segment}.tsv"
     shell:
