@@ -73,7 +73,7 @@ def location(lat_longs, mapping):
                     location_dict[strain] = {'latitude' : coordinates.iloc[row, 2], 'longitude' : coordinates.iloc[row, 3]}
     return location_dict
 
-def geographic_distance(gen_distance_dict, location_dict,):
+def geographic_distance(gen_distance_dict, location_dict):
     '''
     Returns dictionary mapping strain to geographic distance and genetic distance from closest strain.
     '''
@@ -93,16 +93,17 @@ def scatter_plot(distance_dict, table, figure):
     distance_df = pd.DataFrame.from_dict(distance_dict, orient = 'index')
 
     with open(table, 'w') as tsv:
-            distance_df.to_csv(tsv, sep = '\t')
+        distance_df.to_csv(tsv, sep = '\t', index_label = 'strain')
 
     corr, pvalue = stats.spearmanr(distance_df.gen_distance, distance_df.geo_distance)
     lowess = sm.nonparametric.lowess(distance_df.geo_distance, distance_df.gen_distance, frac=1./3, it=2)
+    print(lowess)
     transposed_lowess = lowess.transpose()
-    lx, ly = np.vsplit(transposed_lowess,2)
+    lx, ly = np.vsplit(transposed_lowess, 2)
     plt.figure(figsize=(10,8), facecolor = 'white')
     ax = plt.axes()
     ax.axis(xmin = -1, xmax = np.percentile(distance_df.gen_distance, 99))
-    plt.title('H3N2 Seattle: Genetic distance vs. geographic distance to closest strain', fontsize=18)
+    plt.title('Genetic distance vs. geographic distance to closest strain', fontsize=18)
     plt.ylabel('Geographic distance (km)', fontsize=12)
     plt.xlabel('Genetic distance (bp)', fontsize=12)
     ax.text(32.6, 165, "ρ: {0:.{1}f} \nP: {2:.{3}f}".format(corr, 4, pvalue, 6), fontsize=11)
@@ -115,15 +116,15 @@ def scatter_plot(distance_dict, table, figure):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description="Plot genetic distance vs. geographic distance from closest strain.",
+        description="Plot genetic distance vs. geographic distance from closest strain",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
 
-    parser.add_argument('--metadata', type=str, required=True, help="name of metadata file")
-    parser.add_argument('--alignment', type=str, required=True, help = "name of alignment file")
-    parser.add_argument('--lat-longs', required=True, help="name of lat-longs file")
-    parser.add_argument('--output-table', type=str, default = 'analyses/h3n2_gen_geo_distance.tsv', help = "name of output table")
-    parser.add_argument('--output-figure', type=str, default = 'analyses/h3n2_gen_geo_distance.png', help = "name of output figure")
+    parser.add_argument('--metadata', type=str, default='data/metadata_h3n2_ha.tsv', help="name of metadata file")
+    parser.add_argument('--alignment', type=str, default='results/aggregated/aligned_h3n2_genome_1y.fasta', help="name of alignment file")
+    parser.add_argument('--lat-longs', type=str, default='config/lat_longs.tsv', help="name of lat-longs file")
+    parser.add_argument('--output-table', type=str, default='analyses/h3n2_gen_geo_distance.tsv', help="name of output table")
+    parser.add_argument('--output-figure', type=str, default='analyses/h3n2_gen_geo_distance.png', help="name of output figure")
     args = parser.parse_args()
 
     #Make dictionary mapping strain to location and sequence
