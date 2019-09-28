@@ -5,7 +5,6 @@ One batch run is created per lineage
 
 import subprocess
 import argparse
-import os
 
 def get_cpus(jobs):
     count = 1
@@ -32,12 +31,6 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--segments', nargs='+', type = str, help ="flu segments to include", default=['genome', 'ha', 'na', 'pb2', 'pb1', 'pa', 'np', 'mp', 'ns'])
     params = parser.parse_args()
 
-    if not os.path.exists("logs"):
-        os.makedirs("logs")
-    else:
-        rmc = 'rm -rf logs/*'
-        subprocess.call(rmc, shell=True)
-
     targets = []
     for lineage in params.lineages:
         for resolution in params.resolutions:
@@ -49,13 +42,9 @@ if __name__ == '__main__':
     if params.system == 'local':
         call = ['nextstrain', 'build', '.', '--jobs', '1']
     elif params.system == 'batch':
-        call = ['nextstrain', 'build', '--aws-batch', '--aws-batch-cpus', str(cpus), '--aws-batch-memory', str(memory), '.', '--jobs', str(cpus)]
+        call = ['nextstrain', 'build', '--aws-batch', '--detach', '--aws-batch-cpus', str(cpus), '--aws-batch-memory', str(memory), '.', '--jobs', str(cpus)]
     call.extend(targets)
 
     if targets:
         print(' '.join(call))
-        log = open('logs/%s.txt'%(lineage), 'w')
-        if params.system == 'local':
-            pro = subprocess.call(call)
-        if params.system == 'batch':
-            pro = subprocess.Popen(call, stdout=log, stderr=log)
+        pro = subprocess.call(call)
