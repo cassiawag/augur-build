@@ -34,7 +34,6 @@ rule all:
 
 rule files:
     params:
-        seattle_metadata = "metadata/seattle_metadata.tsv",
         outliers = "config/outliers_{lineage}.txt",
         references = "config/references_{lineage}.txt",
         reference = "config/reference_{lineage}_{segment}.gb",
@@ -89,25 +88,35 @@ rule parse_background_seqmeta:
             --fields {params.fasta_fields}
         """
 
+rule download_seattle_metadata:
+    message:
+        """
+        download_seattle_metadata: Downloading metadata for Seattle sequences
+        from ID3C
+        """
+    output:
+        metadata = "data/seattle_metadata.tsv"
+    shell:
+        """
+        python3 scripts/download_sfs_metadata.py \
+            --output {output.metadata}
+        """
+
+
 rule download_seattle_sequences:
     message:
         """
-        download_seattle_sequences: Downloading Seattle sequences from fauna
+        download_seattle_sequences: Downloading Seattle sequences from ID3C
         {wildcards.lineage} {wildcards.segment}
         """
     output:
         sequences = "data/seattle_sequences_{lineage}_{segment}.fasta"
-    params:
-        fasta_fields = "strain"
     shell:
         """
-        python3 {path_to_fauna}/vdb/download.py \
-            --database vdb \
-            --virus seattle \
-            --fasta_fields {params.fasta_fields} \
-            --select segment:{wildcards.segment} type:{wildcards.lineage} \
-            --path data \
-            --fstem seattle_sequences_{wildcards.lineage}_{wildcards.segment}
+        python3 scripts/download_sfs_sequences.py \
+            --output {output.sequences} \
+            --lineage {wildcards.lineage} \
+            --segment {wildcards.segment}
         """
 
 rule concat_sequences:
@@ -134,7 +143,7 @@ rule concat_metadata:
         """
     input:
         background_metadata = rules.parse_background_seqmeta.output.metadata,
-        seattle_metadata = files.seattle_metadata
+        seattle_metadata = rules.download_seattle_metadata.output.metadata
     output:
         metadata = "data/metadata_{lineage}_{segment}.tsv"
     shell:
