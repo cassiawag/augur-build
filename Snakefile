@@ -96,26 +96,11 @@ rule download_seattle_metadata:
         """
     output:
         metadata = "data/seattle_metadata.tsv"
-    run:
-        import requests
-        import json
-        import csv
-        from urllib.parse import urljoin
-
-        id3c_url = urljoin(os.environ["ID3C_URL"], "v1/shipping/augur-build-metadata")
-        id3c_username = os.environ["ID3C_USERNAME"]
-        id3c_password = os.environ["ID3C_PASSWORD"]
-
-        r = requests.get(id3c_url, auth=(id3c_username, id3c_password), stream=True)
-        stream = r.iter_lines()
-
-        with open(output.metadata, 'w+') as tsv_file:
-            tsv_writer = csv.writer(tsv_file, delimiter='\t')
-            for i, record in enumerate(map(json.loads, stream)):
-                # Write the TSV header
-                if i == 0:
-                    tsv_writer.writerow(record.keys())
-                tsv_writer.writerow(record.values())
+    shell:
+        """
+        python3 scripts/download_sfs_metadata.py \
+            --output {output.metadata}
+        """
 
 
 rule download_seattle_sequences:
