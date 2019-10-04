@@ -29,23 +29,7 @@ region	seattle	47.606271	-122.333037
 #         < /tmp/centroids.geojson \
 #         | sort
 #
-location	africa	4.070194	21.824559
-location	china	35.000074	104.999927
-location	europe	49.646237	10.799454
-location	japan_korea	35.845119	136.736386
-location	north_america	28.2367447	-97.738017
-location	oceania	-25.0562891	152.008576
-location	south_america	-13.083583	-58.470721
-location	south_asia	24.485438	76.513158
-location	southeast_asia	3.020567	112.390683
-location	west_asia	34.000094	48.732280
-location	central_america	17.376838	-93.741977
-location	northeast_usa	42.399817	-73.950238
-location	midwest_usa	41.296461	-90.887825
-location	south_usa	33.160184	-89.238176
-location	west_usa	37.382078	-114.856226
-location	canada	52.669457	-98.194765
-location	seattle	47.606271	-122.333037
+
 location	53001950100	47.15419820864001	-118.3919930000752
 location	53001950200	46.921490843107335	-118.50819586951215
 location	53001950300	46.82774370539734	-119.11576588730878

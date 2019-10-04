@@ -99,16 +99,7 @@ def get_region(row):
     return region
 
 def get_location(row):
-    location = "?"
-    if "country" in row and "division" in row:
-        if row["division"] in region_mapping:
-            location = region_mapping[row["division"]]
-        elif row["country"] in region_mapping:
-            location = region_mapping[row["country"]]
-        else:
-            location = row["region"]
-    else:
-        location = row["region"]
+    location = "other"
     if "residence_census_tract" in row:
         location = str(int(row["residence_census_tract"]))
     return location

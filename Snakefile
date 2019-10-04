@@ -814,7 +814,7 @@ rule traits_aggregated:
     output:
         node_data = "results/aggregated/traits_{lineage}_genome_{resolution}.json",
     params:
-        columns = "region",
+        columns = "region location",
         sampling_bias_correction = 2
     shell:
         """
