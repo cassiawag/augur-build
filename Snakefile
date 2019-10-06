@@ -13,7 +13,7 @@ wildcard_constraints:
     cluster = "[A-Za-z0-9]{8,10}"
 
 def viruses_per_month(wildcards):
-    vpm = {'1y': 320, '2y': 160} # should be a multiple of 16
+    vpm = {'1y': 400, '2y': 192} # should be a multiple of 16
     return vpm[wildcards.resolution]
 
 def reference_strain(wildcards):
@@ -27,10 +27,10 @@ def reference_strain(wildcards):
 
 rule all:
     input:
-        auspice_tree = expand("auspice/seattle_flu_seasonal_{lineage}_{segment}_{resolution}_tree.json", lineage=lineages, segment=segments, resolution=resolutions),
-        auspice_meta = expand("auspice/seattle_flu_seasonal_{lineage}_{segment}_{resolution}_meta.json", lineage=lineages, segment=segments, resolution=resolutions),
-        auspice_aggregated_tree = expand("auspice/seattle_flu_seasonal_{lineage}_genome_{resolution}_tree.json", lineage=lineages, resolution=resolutions),
-        auspice_aggregated_meta = expand("auspice/seattle_flu_seasonal_{lineage}_genome_{resolution}_meta.json", lineage=lineages, resolution=resolutions)
+        auspice_tree = expand("auspice/seattleflu_flu_seasonal_{lineage}_{segment}_{resolution}_tree.json", lineage=lineages, segment=segments, resolution=resolutions),
+        auspice_meta = expand("auspice/seattleflu_flu_seasonal_{lineage}_{segment}_{resolution}_meta.json", lineage=lineages, segment=segments, resolution=resolutions),
+        auspice_aggregated_tree = expand("auspice/seattleflu_flu_seasonal_{lineage}_genome_{resolution}_tree.json", lineage=lineages, resolution=resolutions),
+        auspice_aggregated_meta = expand("auspice/seattleflu_flu_seasonal_{lineage}_genome_{resolution}_meta.json", lineage=lineages, resolution=resolutions)
 
 rule files:
     params:
@@ -181,7 +181,7 @@ rule filter:
             --min-length {params.min_length} \
             --non-nucleotide \
             --exclude {input.exclude} \
-            --exclude-where region=? passage=egg \
+            --exclude-where region=? passage=egg division=washington \
             --output {output}
         """
 
@@ -520,8 +520,8 @@ rule export:
         auspice_config = files.auspice_config,
         node_data = _get_node_data_for_export
     output:
-        auspice_tree = "auspice/seattle_flu_seasonal_{lineage}_{segment}_{resolution}_tree.json",
-        auspice_meta = "auspice/seattle_flu_seasonal_{lineage}_{segment}_{resolution}_meta.json"
+        auspice_tree = "auspice/seattleflu_flu_seasonal_{lineage}_{segment}_{resolution}_tree.json",
+        auspice_meta = "auspice/seattleflu_flu_seasonal_{lineage}_{segment}_{resolution}_meta.json"
     shell:
         """
         augur export \
@@ -895,7 +895,7 @@ rule export_aggregated:
         node_data = _get_node_data_for_export_aggregated
     output:
         auspice_tree = "results/aggregated/seattle_flu_seasonal_{lineage}_genome_{resolution}_tree.json",
-        auspice_meta = "auspice/seattle_flu_seasonal_{lineage}_genome_{resolution}_meta.json"
+        auspice_meta = "auspice/seattleflu_flu_seasonal_{lineage}_genome_{resolution}_meta.json"
     shell:
         """
         augur export \
@@ -918,7 +918,7 @@ rule hide_nodes_aggregated:
     input:
         auspice_tree = rules.export_aggregated.output.auspice_tree
     output:
-        auspice_tree = "auspice/seattle_flu_seasonal_{lineage}_genome_{resolution}_tree.json"
+        auspice_tree = "auspice/seattleflu_flu_seasonal_{lineage}_genome_{resolution}_tree.json"
     shell:
         """
         python scripts/annotate_hidden_nodes.py \

@@ -78,6 +78,7 @@ region_mapping = {
     "nicaragua": "central_america",
     "panama": "central_america",
     "puerto_rico": "central_america",
+    "saint_kitts": "central_america",
     "saint_lucia": "central_america",
     "saint_vincent_and_the_grenadines": "central_america",
     "trinidad_and_tobago": "central_america",
