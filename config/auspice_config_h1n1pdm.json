@@ -1,5 +1,5 @@
 {
-  "title": "Real-time tracking of influenza A/H1N1pdm evolution",
+  "title": "Seattle Flu Study // Tracking influenza A/H1N1pdm evolution and spread",
   "color_options": {
     "gt": {
       "menuItem": "genotype",
@@ -55,12 +55,6 @@
       "key": "site_category",
       "legendTitle": "Site category",
       "menuItem": "site category",
-      "type": "discrete"
-    },
-    "site_type": {
-      "key": "site_type",
-      "legendTitle": "Site type",
-      "menuItem": "site type",
       "type": "discrete"
     },
     "flu_shot": {
