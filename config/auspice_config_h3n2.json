@@ -82,7 +82,6 @@
     "region",
     "age_category",
     "site_category",
-    "site_type",
     "flu_shot"
   ],
   "panels": [
