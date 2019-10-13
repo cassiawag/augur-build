@@ -797,16 +797,13 @@ rule clades_aggregated:
         """
     input:
         tree = rules.refine_aggregated.output.tree,
-        nt_muts = rules.ancestral_aggregated.output.node_data,
-        aa_muts = rules.translate_aggregated.output.node_data,
-        clades = "config/clades_{lineage}_ha.tsv"
+        clades = "results/clades_{lineage}_ha_{resolution}.json"
     output:
         node_data = "results/aggregated/clades_{lineage}_genome_{resolution}.json"
     shell:
         """
-        augur clades \
+        python3 scripts/import_tip_clades.py \
             --tree {input.tree} \
-            --mutations {input.nt_muts} {input.aa_muts} \
             --clades {input.clades} \
             --output {output.node_data}
         """
