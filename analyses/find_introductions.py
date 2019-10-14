@@ -13,11 +13,9 @@ Outputs are:
 '''
 
 import argparse
-import numpy as np
 import pandas as pd
 import matplotlib as mpl
 from matplotlib import pyplot as plt
-import matplotlib.patheffects as path_effects
 import baltic as bt
 
 def assign_region_trait_to_stub_nodes(baltic_tree):
@@ -101,13 +99,31 @@ def count_number_of_seattle_leaves(baltic_tree):
     return n_seattle_leaves
 
 
-def find_source_of_introduction(baltic_tree):
+def find_region_of_introduction(baltic_tree):
     """
-    This function returns the region state on the root of a subtree.
+    This function returns the 'region' trait on the root of a subtree
     """
     sorted_tree = sorted(baltic_tree.Objects, key = lambda x:x.height)
-    origin = sorted_tree[0].parent.traits['region']#root fill have smallest height, and therefore be 0th element
-    return origin
+    region = sorted_tree[0].parent.traits['region'] # root fill have smallest height, and therefore be 0th element
+    return region
+
+def find_clade_of_introduction(baltic_tree):
+    """
+    This function returns the 'clade_membership' trait of members of a subtree
+    """
+    clade = "unknown"
+    for node in baltic_tree.Objects:
+        if 'clade_membership' in node.traits:
+            clade = node.traits['clade_membership']
+    return clade
+
+def find_date_of_introduction(baltic_tree):
+    """
+    This function returns the 'num_date' trait on the root of a subtree
+    """
+    sorted_tree = sorted(baltic_tree.Objects, key = lambda x:x.height)
+    date = sorted_tree[0].parent.traits['num_date'] # root fill have smallest height, and therefore be 0th element
+    return date
 
 def create_dataframe(basal_subtrees, table):
     """
@@ -116,11 +132,14 @@ def create_dataframe(basal_subtrees, table):
     """
     data = []
     for tree in basal_subtrees:
-        data.append([count_number_of_seattle_leaves(tree), find_source_of_introduction(tree)])
+        data.append([count_number_of_seattle_leaves(tree),
+                     find_region_of_introduction(tree),
+                     find_clade_of_introduction(tree),
+                     find_date_of_introduction(tree)])
     seattle_introductions_df = pd.DataFrame(data)
-    seattle_introductions_df.columns = ["n_seattle_children","source_of_introduction"]
+    seattle_introductions_df.columns = ["size", "region", "clade", "root_date"]
     with open(table, 'w') as tsv:
-            seattle_introductions_df.to_csv(tsv, sep = '\t')
+        seattle_introductions_df.to_csv(tsv, sep='\t', index=False)
     return seattle_introductions_df
 
 def plot_intro_by_size(dataframe, lineage, output):
@@ -131,17 +150,17 @@ def plot_intro_by_size(dataframe, lineage, output):
     mpl.rcParams['axes.labelweight']=110
     mpl.rcParams['font.size']=14
 
-    #make histogram of introductions by size
-    fig,ax = plt.subplots(figsize=(10,8), facecolor='white')
-    plt.hist(dataframe['n_seattle_children'], bins = 50, color = '#4292c6')
+    # make histogram of introductions by size
+    fig, ax = plt.subplots(figsize=(10,8), facecolor='white')
+    plt.hist(dataframe['size'], bins = 50, color = '#4292c6')
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.set_aspect(0.8)
     ax.set_xlabel("Number of sequenced cases in Seattle")
     ax.set_ylabel("Number of introductions")
     ax.set_title(lineage)
-    ax.set_xlim(1,90)
-    ax.set_ylim(0,45)
+    # ax.set_xlim(1,190)
+    # ax.set_ylim(0,100)
     plt.tight_layout()
 
     plt.savefig(output, dpi=250)
@@ -153,20 +172,22 @@ def plot_intro_by_region(dataframe, lineage, colors, output):
     with open(colors) as cfile:
         color_df= pd.read_csv(cfile, sep = '\t', header = None, )
     color_df.columns = [ 'classification', 'region', 'color']
-    color_df['label'] = ['China', 'Southeast Asia', 'South Asia', 'Japan/Korea', 'Oceania', 'West Asia', 'Africa', 'Europe',
-                        'South America', 'North America', 'Central America', 'Northeast USA', 'Midwest USA', 'South USA',
-                        'West USA', 'Canada', 'Seattle']
+    color_df = color_df[color_df.classification == 'region']
+    color_df['label'] = ['China', 'Southeast Asia', 'South Asia', 'Japan/Korea',
+                         'Oceania', 'West Asia', 'Africa', 'Europe', 'South America',
+                         'Central America', 'Northeast USA', 'Midwest USA', 'South USA',
+                         'West USA', 'Canada', 'Seattle']
     style = color_df.set_index('region')
-    introductions_by_region = dataframe['source_of_introduction'].value_counts()
+    introductions_by_region = dataframe['region'].value_counts()
     introduction_df = introductions_by_region.to_frame(name = 'num_introductions')
     plot_df = style.join(introduction_df, how='inner')
 
-    mpl.rcParams['font.weight']=110
-    mpl.rcParams['axes.labelweight']=110
-    mpl.rcParams['font.size']=14
+    mpl.rcParams['font.weight'] = 110
+    mpl.rcParams['axes.labelweight'] = 110
+    mpl.rcParams['font.size'] = 14
 
-    fig,ax = plt.subplots(figsize=(10,8), facecolor='white')
-    ax.bar(plot_df.index , plot_df['num_introductions'], color = plot_df['color'])#, color=colors)
+    fig, ax = plt.subplots(figsize=(10,8), facecolor='white')
+    ax.bar(plot_df.index, plot_df['num_introductions'], color = plot_df['color'])#, color=colors)
     ax.set_xticklabels(labels = plot_df['label'], rotation=90)
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
@@ -184,12 +205,12 @@ if __name__ == '__main__':
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
 
-    parser.add_argument('--tree', type=str, required=True, help="name of JSON tree")
-    parser.add_argument('--output-table', type=str, required=True, help = "name of output TSV")
-    parser.add_argument('--lineage', type=str, required=True, help = "lineage of tree")
-    parser.add_argument('--output-size-figure', type=str, required=True, help = "name of output for introductions by size figure")
-    parser.add_argument('--colors', type=str, required=True, help = "name of colors TSV")
-    parser.add_argument('--output-region-figure', type=str, required=True, help = "name of output for introductions by region figure")
+    parser.add_argument('--tree', type=str, default="auspice/seattleflu_flu_seasonal_h3n2_genome_1y_tree.json", help="name of JSON tree")
+    parser.add_argument('--output-table', type=str, default="analyses/tables/introductions_h3n2.tsv", help = "name of output TSV")
+    parser.add_argument('--lineage', type=str, default="h3n2", help = "lineage of tree")
+    parser.add_argument('--colors', type=str, default="config/colors.tsv", help = "name of colors TSV")
+    parser.add_argument('--output-size-figure', type=str, default="analyses/figures/introductions_size_h3n2.png", help = "name of output for introductions by size figure")
+    parser.add_argument('--output-region-figure', type=str, default="analyses/figures/introductions_region_h3n2.png", help = "name of output for introductions by region figure")
     args = parser.parse_args()
 
 # LoadsJSON tree
