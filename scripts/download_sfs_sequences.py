@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    id3c_url = urljoin(os.environ["ID3C_URL"], "v1/shipping/genomic-data/")
+    id3c_url = urljoin(os.environ["ID3C_URL"] + "/", "v1/shipping/genomic-data/")
     id3c_username = os.environ["ID3C_USERNAME"]
     id3c_password = os.environ["ID3C_PASSWORD"]
 
