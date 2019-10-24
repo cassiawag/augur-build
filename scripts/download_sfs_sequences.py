@@ -34,6 +34,7 @@ def get_sequences_from_id3c(url, username, password, lineage, segment, output):
     GET sequences from ID3C server with provided *lineage* and *segment*
     """
     r = requests.get(url, auth=(username,password), stream=True)
+    r.raise_for_status()
 
     with open(output, 'w+') as fasta_file:
         for line in r.iter_lines():

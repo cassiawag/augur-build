@@ -7,6 +7,7 @@ import requests
 
 def get_metadata_from_id3c(id3c_url, id3c_username, id3c_password, output):
     r = requests.get(id3c_url, auth=(id3c_username, id3c_password), stream=True)
+    r.raise_for_status()
     stream = r.iter_lines()
 
     with open(output, 'w+') as tsv_file:
