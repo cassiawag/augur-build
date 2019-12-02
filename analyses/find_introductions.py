@@ -122,7 +122,7 @@ def find_date_of_introduction(baltic_tree):
     This function returns the 'num_date' trait on the root of a subtree
     """
     sorted_tree = sorted(baltic_tree.Objects, key = lambda x:x.height)
-    date = sorted_tree[0].parent.traits['num_date'] # root fill have smallest height, and therefore be 0th element
+    date = sorted_tree[0].traits['num_date'] # root fill have smallest height, and therefore be 0th element
     return date
 
 def create_dataframe(basal_subtrees, table):

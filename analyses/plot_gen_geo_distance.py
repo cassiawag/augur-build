@@ -123,8 +123,8 @@ if __name__ == '__main__':
     parser.add_argument('--metadata', type=str, default='data/metadata_h3n2_ha.tsv', help="name of metadata file")
     parser.add_argument('--alignment', type=str, default='results/aggregated/aligned_h3n2_genome_1y.fasta', help="name of alignment file")
     parser.add_argument('--lat-longs', type=str, default='config/lat_longs.tsv', help="name of lat-longs file")
-    parser.add_argument('--output-table', type=str, default='analyses/h3n2_gen_geo_distance.tsv', help="name of output table")
-    parser.add_argument('--output-figure', type=str, default='analyses/h3n2_gen_geo_distance.png', help="name of output figure")
+    parser.add_argument('--output-table', type=str, default='analyses/tables/h3n2_gen_geo_distance.tsv', help="name of output table")
+    parser.add_argument('--output-figure', type=str, default='analyses/figures/h3n2_gen_geo_distance.png', help="name of output figure")
     args = parser.parse_args()
 
     #Make dictionary mapping strain to location and sequence
