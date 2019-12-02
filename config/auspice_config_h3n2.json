@@ -19,12 +19,6 @@
       "menuItem": "region",
       "type": "discrete"
     },
-    "location": {
-      "key": "location",
-      "legendTitle": "Location",
-      "menuItem": "location",
-      "type": "discrete"
-    },
     "clade_membership": {
       "key": "clade_membership",
       "legendTitle": "Clade",
@@ -32,8 +26,6 @@
       "type": "discrete"
     },
     "lbi": {
-      "vmin": 0,
-      "vmax": 0.7,
       "legendTitle": "local branching index",
       "key": "lbi",
       "menuItem": "local branching index",
@@ -65,8 +57,7 @@
     }
   },
   "geo": [
-    "region",
-    "location"
+    "region"
   ],
   "defaults": {
     "mapTriplicate": true,
@@ -87,8 +78,7 @@
   "panels": [
     "tree",
     "map",
-    "entropy",
-    "frequencies"
+    "entropy"
   ],
   "vaccine_choices": {
     "A/Wisconsin/67/2005": "2006-02-21",
