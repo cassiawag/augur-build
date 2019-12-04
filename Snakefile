@@ -102,6 +102,26 @@ rule download_seattle_metadata:
             --output {output.metadata}
         """
 
+rule cleanup_seattle_metadata:
+    message:
+        """
+        cleanup_seattle_metadata: Fix issue with date naming to swap
+        '2019-09-25T19:37:35.483+00:00' to '2019-09-25'
+        """
+    input:
+        metadata = rules.download_seattle_metadata.output.metadata
+    output:
+        metadata = "data/seattle_metadata_clean.tsv"
+    run:
+        import re
+        import pandas as pd
+        meta = pd.read_csv(input.metadata, sep='\t')
+        dates = []
+        for date in meta["date"]:
+            date = re.sub(r'T\d+:\d+:[0-9\.]+\+[0-9\.]+:[0-9\.]+', '', date)
+            dates.append(date)
+        meta['date'] = dates
+        meta.to_csv(output.metadata, index=False, sep='\t')
 
 rule download_seattle_sequences:
     message:
@@ -143,7 +163,7 @@ rule concat_metadata:
         """
     input:
         background_metadata = rules.parse_background_seqmeta.output.metadata,
-        seattle_metadata = rules.download_seattle_metadata.output.metadata
+        seattle_metadata = rules.cleanup_seattle_metadata.output.metadata
     output:
         metadata = "data/metadata_{lineage}_{segment}.tsv"
     shell:
