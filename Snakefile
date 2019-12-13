@@ -3,7 +3,7 @@ if os.environ.get('FAUNA_PATH'):
     path_to_fauna = os.environ.get('FAUNA_PATH')
 
 segments = ['ha', 'na', 'pb2', 'pb1', 'pa', 'np', 'mp', 'ns']
-lineages = ['h3n2', 'h1n1pdm']
+lineages = ['h3n2', 'h1n1pdm', 'vic', 'yam']
 resolutions = ['1y']
 
 wildcard_constraints:
@@ -300,8 +300,12 @@ def clock_rate(w):
         ('h1n1pdm', 'ha'): 0.00329, ('h1n1pdm', 'na'): 0.00342, ('h1n1pdm', 'mp'): 0.00209,
         ('h1n1pdm', 'np'): 0.00196, ('h1n1pdm', 'ns'): 0.00278, ('h1n1pdm', 'pa'): 0.00235,
         ('h1n1pdm', 'pb1'): 0.00188, ('h1n1pdm', 'pb2'): 0.00224,
-        ('vic', 'ha'): 0.0024, ('vic', 'na'): 0.0015,
-        ('yam', 'ha'): 0.0019, ('yam', 'na'): 0.0013
+        ('vic', 'ha'): 0.00148, ('vic', 'na'): 0.00160, ('vic', 'mp'): 0.0010,
+        ('vic', 'np'): 0.00132, ('vic', 'ns'): 0.0015, ('vic', 'pa'): 0.00178,
+        ('vic', 'pb1'): 0.00114, ('vic', 'pb2'): 0.00106,
+        ('yam', 'ha'): 0.00196, ('yam', 'na'): 0.00176, ('yam', 'mp'): 0.0010,
+        ('yam', 'np'): 0.00133, ('yam', 'ns'): 0.0015, ('yam', 'pa'): 0.00112,
+        ('yam', 'pb1'): 0.00092, ('yam', 'pb2'): 0.00113
     }
     return rate[(w.lineage, w.segment)]
 
@@ -544,7 +548,7 @@ rule export:
         auspice_meta = "auspice/seattleflu_flu_seasonal_{lineage}_{segment}_{resolution}_meta.json"
     shell:
         """
-        augur export \
+        augur export v1 \
             --tree {input.tree} \
             --metadata {input.metadata} \
             --node-data {input.node_data} \
@@ -915,7 +919,7 @@ rule export_aggregated:
         auspice_meta = "auspice/seattleflu_flu_seasonal_{lineage}_genome_{resolution}_meta.json"
     shell:
         """
-        augur export \
+        augur export v1 \
             --tree {input.tree} \
             --metadata {input.metadata} \
             --node-data {input.node_data} \
