@@ -753,7 +753,7 @@ rule refine_aggregated:
     params:
         coalescent = "const",
         date_inference = "marginal",
-        clock_filter_iqd = 4
+        clock_filter_iqd = 6
     shell:
         """
         augur refine \
