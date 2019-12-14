@@ -102,27 +102,6 @@ rule download_seattle_metadata:
             --output {output.metadata}
         """
 
-rule cleanup_seattle_metadata:
-    message:
-        """
-        cleanup_seattle_metadata: Fix issue with date naming to swap
-        '2019-09-25T19:37:35.483+00:00' to '2019-09-25'
-        """
-    input:
-        metadata = rules.download_seattle_metadata.output.metadata
-    output:
-        metadata = "data/seattle_metadata_clean.tsv"
-    run:
-        import re
-        import pandas as pd
-        meta = pd.read_csv(input.metadata, sep='\t')
-        dates = []
-        for date in meta["date"]:
-            date = re.sub(r'T\d+:\d+:[0-9\.]+\+[0-9\.]+:[0-9\.]+', '', date)
-            dates.append(date)
-        meta['date'] = dates
-        meta.to_csv(output.metadata, index=False, sep='\t')
-
 rule download_seattle_sequences:
     message:
         """
@@ -475,21 +454,6 @@ rule lbi:
             --tau {params.tau} \
             --window {params.window} \
             --output {output.node_data}
-        """
-
-rule hamming_distance:
-    message:
-        """
-        hamming_distance: Calculating segment hamming distance
-        {wildcards.lineage} {wildcards.segment} {wildcards.resolution}
-        """
-    input:
-        aligned = rules.align.output.alignment
-    output:
-        data = "results/distance_{lineage}_{segment}_{resolution}.json"
-    shell:
-        """
-        python3 scripts/reassort/hamming.py --fasta {input.aligned} --output {output.data}
         """
 
 rule clustering:

@@ -1,8 +1,8 @@
-import requests
 import argparse
 import json
 import os
 from urllib.parse import urljoin
+import requests
 
 
 def get_full_lineage(short_lineage):
@@ -40,7 +40,8 @@ def get_sequences_from_id3c(url, username, password, lineage, segment, output):
         for line in r.iter_lines():
             if line:
                 sequence = json.loads(line)
-                fasta_file.write("".join([">", sequence['sample'], "\n", sequence['seq'].lower(), "\n"]))
+                strain = "SFS-" + sequence['sample'][-8:]
+                fasta_file.write("".join([">", strain, "\n", sequence['seq'].lower(), "\n"]))
 
 
 if __name__ == '__main__':

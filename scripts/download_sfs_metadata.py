@@ -2,6 +2,7 @@ import os
 import argparse
 import json
 import csv
+import re
 from urllib.parse import urljoin
 import requests
 
@@ -16,7 +17,13 @@ def get_metadata_from_id3c(id3c_url, id3c_username, id3c_password, output):
             # Write the TSV header
             if i == 0:
                 tsv_writer.writerow(record.keys())
-            tsv_writer.writerow(record.values())
+            # Only include rows with strain
+            if record['strain']:
+                # Fix strain format
+                record['strain'] = "SFS-" + record['strain'][-8:]
+                # Fix date format
+                record['date'] = re.sub(r'T\d+:\d+:[0-9\.]+\+[0-9\.]+:[0-9\.]+', '', record['date'])
+                tsv_writer.writerow(record.values())
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
