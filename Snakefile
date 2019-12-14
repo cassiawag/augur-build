@@ -142,7 +142,7 @@ rule concat_metadata:
         """
     input:
         background_metadata = rules.parse_background_seqmeta.output.metadata,
-        seattle_metadata = rules.cleanup_seattle_metadata.output.metadata
+        seattle_metadata = rules.download_seattle_metadata.output.metadata
     output:
         metadata = "data/metadata_{lineage}_{segment}.tsv"
     shell:
