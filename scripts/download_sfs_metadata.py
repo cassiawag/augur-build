@@ -14,6 +14,9 @@ def get_metadata_from_id3c(id3c_url, id3c_username, id3c_password, output):
     with open(output, 'w+') as tsv_file:
         tsv_writer = csv.writer(tsv_file, delimiter='\t')
         for i, record in enumerate(map(json.loads, stream)):
+            record['originating_lab'] = ""
+            record['submitting_lab'] = ""
+            record['country'] = ""
             # Write the TSV header
             if i == 0:
                 tsv_writer.writerow(record.keys())
@@ -23,6 +26,12 @@ def get_metadata_from_id3c(id3c_url, id3c_username, id3c_password, output):
                 record['strain'] = "SFS-" + record['strain'][-8:]
                 # Fix date format
                 record['date'] = re.sub(r'T\d+:\d+:[0-9\.]+\+[0-9\.]+:[0-9\.]+', '', record['date'])
+                # Include originating and submitting lab
+                record['originating_lab'] = "Seattle Flu Study"
+                record['submitting_lab'] = "Seattle Flu Study"
+                # Include country and region
+                record['country'] = "USA"
+                record['region'] = "Seattle"
                 tsv_writer.writerow(record.values())
 
 if __name__ == '__main__':

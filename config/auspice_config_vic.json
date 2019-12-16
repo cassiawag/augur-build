@@ -1,73 +1,73 @@
 {
-  "title": "Seattle Flu Study // Tracking of influenza B/Vic evolution and spread",
-  "color_options": {
-    "gt": {
-      "menuItem": "genotype",
-      "legendTitle": "Genotype",
-      "type": "discrete",
-      "key": "genotype"
+  "title": "Real-time tracking of influenza B/Vic evolution and spread",
+  "maintainers": [
+    {"name": "Seattle Flu Study", "url": "https://seattleflu.org"}
+  ],
+  "build_url": "https://github.com/seattleflu/augur-build",
+  "colorings": [
+    {
+      "key": "gt",
+      "title": "Genotype",
+      "type": "categorical"
     },
-    "num_date": {
-      "menuItem": "date",
-      "legendTitle": "Sampling date",
-      "type": "continuous",
-      "key": "num_date"
-    },
-    "region": {
-      "key": "region",
-      "legendTitle": "Region",
-      "menuItem": "region",
-      "type": "discrete"
-    },
-    "clade_membership": {
+    {
       "key": "clade_membership",
-      "legendTitle": "Clade",
-      "menuItem": "clade",
-      "type": "discrete"
+      "title": "Clade",
+      "type": "categorical"
     },
-    "lbi": {
-      "legendTitle": "local branching index",
-      "key": "lbi",
-      "menuItem": "local branching index",
+    {
+      "key": "num_date",
+      "title": "Date",
       "type": "continuous"
     },
-    "cluster": {
-      "key": "cluster",
-      "legendTitle": "Cluster",
-      "menuItem": "cluster",
-      "type": "discrete"
+    {
+      "key": "region",
+      "title": "Region",
+      "type": "categorical"
     },
-    "age_category": {
+    {
       "key": "age_category",
-      "legendTitle": "Age category",
-      "menuItem": "age category",
-      "type": "discrete"
+      "title": "Age category",
+      "type": "categorical"
     },
-    "site_category": {
+    {
       "key": "site_category",
-      "legendTitle": "Site category",
-      "menuItem": "site category",
-      "type": "discrete"
+      "title": "Site category",
+      "type": "categorical"
     },
-    "flu_shot": {
+    {
       "key": "flu_shot",
-      "legendTitle": "Vaccinated",
-      "menuItem": "vaccinated",
-      "type": "discrete"
+      "title": "Vaccinated",
+      "type": "categorical"
+    },
+    {
+      "key": "cluster",
+      "title": "Cluster",
+      "type": "categorical"
+    },
+    {
+      "key": "lbi",
+      "title": "Local branching index",
+      "type": "continuous"
+    },
+    {
+      "key": "submitting_lab",
+      "title": "Submitting lab",
+      "type": "categorical"
+    },
+    {
+      "key": "originating_lab",
+      "title": "Originating lab",
+      "type": "categorical"
     }
-  },
-  "geo": [
+  ],
+  "geo_resolutions": [
     "region"
   ],
-  "defaults": {
-    "mapTriplicate": true,
-    "colorBy": "region",
-    "geoResolution": "region"
+  "display_defaults": {
+    "map_triplicate": true,
+    "color_by": "region"
   },
-  "maintainer": [
-    "Trevor Bedford",
-    "http://bedford.io/"
-  ],
   "filters": [
     "clade_membership",
     "region",
@@ -79,10 +79,5 @@
     "tree",
     "map",
     "entropy"
-  ],
-  "vaccine_choices": {
-    "B/Malaysia/2506/2004": "2006-09-25",
-    "B/Brisbane/60/2008": "2009-09-25",
-    "B/Colorado/6/2017": "2018-02-22"
-  }
+  ]
 }

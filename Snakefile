@@ -27,10 +27,8 @@ def reference_strain(wildcards):
 
 rule all:
     input:
-        auspice_tree = expand("auspice/seattleflu_flu_seasonal_{lineage}_{segment}_{resolution}_tree.json", lineage=lineages, segment=segments, resolution=resolutions),
-        auspice_meta = expand("auspice/seattleflu_flu_seasonal_{lineage}_{segment}_{resolution}_meta.json", lineage=lineages, segment=segments, resolution=resolutions),
-        auspice_aggregated_tree = expand("auspice/seattleflu_flu_seasonal_{lineage}_genome_{resolution}_tree.json", lineage=lineages, resolution=resolutions),
-        auspice_aggregated_meta = expand("auspice/seattleflu_flu_seasonal_{lineage}_genome_{resolution}_meta.json", lineage=lineages, resolution=resolutions)
+        auspice_json = expand("auspice/seattleflu_flu_seasonal_{lineage}_{segment}_{resolution}.json", lineage=lineages, segment=segments, resolution=resolutions),
+        auspice_aggregated_json = expand("auspice/seattleflu_flu_seasonal_{lineage}_genome_{resolution}.json", lineage=lineages, resolution=resolutions)
 
 rule files:
     params:
@@ -41,6 +39,7 @@ rule files:
         colors = "config/colors.tsv",
         lat_longs = "config/lat_longs.tsv",
         auspice_config = "config/auspice_config_{lineage}.json",
+        description = "config/description.md"
 
 files = rules.files.params
 
@@ -53,7 +52,7 @@ rule download_background_seqmeta:
     output:
         seqmeta = "data/background_seqmeta_{lineage}_{segment}.fasta"
     params:
-        fasta_fields = "strain virus accession collection_date region country division location passage_category submitting_lab age gender"
+        fasta_fields = "strain virus accession collection_date region country division location passage_category originating_lab submitting_lab age gender"
     shell:
         """
         python3 {path_to_fauna}/vdb/download.py \
@@ -78,14 +77,16 @@ rule parse_background_seqmeta:
         sequences = "data/background_sequences_{lineage}_{segment}.fasta",
         metadata = "data/background_metadata_{lineage}_{segment}.tsv"
     params:
-        fasta_fields = "strain virus isolate_id date region country division location passage authors age sex"
+        fasta_fields = "strain virus accession date region country division location passage originating_lab submitting_lab age gender",
+        prettify_fields = "region country division location originating_lab submitting_lab"
     shell:
         """
         augur parse \
             --sequences {input.seqmeta} \
             --output-sequences {output.sequences} \
             --output-metadata {output.metadata} \
-            --fields {params.fasta_fields}
+            --fields {params.fasta_fields} \
+            --prettify-fields {params.prettify_fields}
         """
 
 rule download_seattle_metadata:
@@ -150,7 +151,7 @@ rule concat_metadata:
         python3 scripts/concat_metadata.py \
             --files {input.background_metadata} {input.seattle_metadata} \
             --mergeby strain \
-            --fields date region location country division residence_census_tract site site_type site_category flu_shot age age_category sex authors \
+            --fields date region location country division residence_census_tract site site_type site_category flu_shot age age_category sex passage originating_lab submitting_lab \
             > {output.metadata}
         """
 
@@ -180,14 +181,14 @@ rule filter:
             --min-length {params.min_length} \
             --non-nucleotide \
             --exclude {input.exclude} \
-            --exclude-where region=? passage=egg division=washington \
+            --exclude-where region=? passage=egg division=Washington \
             --output {output}
         """
 
 rule select_strains:
     message:
         """
-        select_strains: Subsampling background strains, but include all strains with region=seattle
+        select_strains: Subsampling background strains, but include all strains with region=Seattle
         {wildcards.lineage} {wildcards.resolution}
         """
     input:
@@ -506,21 +507,21 @@ rule export:
         colors = files.colors,
         lat_longs = files.lat_longs,
         auspice_config = files.auspice_config,
+        description = files.description,
         node_data = _get_node_data_for_export
     output:
-        auspice_tree = "auspice/seattleflu_flu_seasonal_{lineage}_{segment}_{resolution}_tree.json",
-        auspice_meta = "auspice/seattleflu_flu_seasonal_{lineage}_{segment}_{resolution}_meta.json"
+        auspice_json = "auspice/seattleflu_flu_seasonal_{lineage}_{segment}_{resolution}.json"
     shell:
         """
-        augur export v1 \
+        augur export v2 \
             --tree {input.tree} \
             --metadata {input.metadata} \
             --node-data {input.node_data} \
             --colors {input.colors} \
             --lat-longs {input.lat_longs} \
             --auspice-config {input.auspice_config} \
-            --output-tree {output.auspice_tree} \
-            --output-meta {output.auspice_meta}
+            --description {input.description} \
+            --output {output.auspice_json}
         """
 
 checkpoint clusters_fasta:
@@ -535,7 +536,7 @@ checkpoint clusters_fasta:
         metadata = expand("data/metadata_{{lineage}}_{segment}.tsv", segment = segments)
     params:
         min_size = 2,
-        filter_to_region = "seattle"
+        filter_to_region = "Seattle"
     output:
         dir = directory("results/clusters/pre_{lineage}_genome_{resolution}")
     shell:
@@ -877,21 +878,21 @@ rule export_aggregated:
         colors = files.colors,
         lat_longs = files.lat_longs,
         auspice_config = files.auspice_config,
+        description = files.description,
         node_data = _get_node_data_for_export_aggregated
     output:
-        auspice_tree = "results/aggregated/seattle_flu_seasonal_{lineage}_genome_{resolution}_tree.json",
-        auspice_meta = "auspice/seattleflu_flu_seasonal_{lineage}_genome_{resolution}_meta.json"
+        auspice_json = "results/aggregated/seattle_flu_seasonal_{lineage}_genome_{resolution}.json"
     shell:
         """
-        augur export v1 \
+        augur export v2 \
             --tree {input.tree} \
             --metadata {input.metadata} \
             --node-data {input.node_data} \
             --colors {input.colors} \
             --lat-longs {input.lat_longs} \
             --auspice-config {input.auspice_config} \
-            --output-tree {output.auspice_tree} \
-            --output-meta {output.auspice_meta}
+            --description {input.description} \
+            --output {output.auspice_json}
         """
 
 rule hide_nodes_aggregated:
@@ -901,14 +902,14 @@ rule hide_nodes_aggregated:
         {wildcards.lineage} {wildcards.resolution}
         """
     input:
-        auspice_tree = rules.export_aggregated.output.auspice_tree
+        auspice_json = rules.export_aggregated.output.auspice_json
     output:
-        auspice_tree = "auspice/seattleflu_flu_seasonal_{lineage}_genome_{resolution}_tree.json"
+        auspice_json = "auspice/seattleflu_flu_seasonal_{lineage}_genome_{resolution}.json"
     shell:
         """
         python scripts/annotate_hidden_nodes.py \
-            --input {input.auspice_tree} \
-            --output {output.auspice_tree}
+            --input {input.auspice_json} \
+            --output {output.auspice_json}
         """
 
 rule clean:

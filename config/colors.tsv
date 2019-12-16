@@ -1,19 +1,19 @@
-region	china	#511EA8
-region	southeast_asia	#403DC5
-region	south_asia	#4063CF
-region	japan_korea	#4785C7
-region	oceania	#559EB1
-region	west_asia	#67AF94
-region	africa	#7EB877
-region	europe	#98BD5E
-region	south_america	#B4BD4C
-region	central_america	#C2BA46
-region	northeast_usa	#CCB742
-region	midwest_usa	#D3B240
-region	south_usa	#DAAC3D
-region	west_usa	#DFA43B
-region	canada	#E39B39
-region	seattle	#DC2F24
+region	China	#511EA8
+region	Southeast Asia	#403DC5
+region	South Asia	#4063CF
+region	Japan Korea	#4785C7
+region	Oceania	#559EB1
+region	West Asia	#67AF94
+region	Africa	#7EB877
+region	Europe	#98BD5E
+region	South America	#B4BD4C
+region	Central America	#C2BA46
+region	Northeast USA	#CCB742
+region	Midwest USA	#D3B240
+region	South USA	#DAAC3D
+region	West USA	#DFA43B
+region	Canada	#E39B39
+region	Seattle	#DC2F24
 
 location	53053072901	#3D1780
 location	53053071310	#471A93

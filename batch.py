@@ -35,7 +35,7 @@ if __name__ == '__main__':
     for lineage in params.lineages:
         for resolution in params.resolutions:
             for segment in params.segments:
-                targets.append('auspice/seattleflu_flu_seasonal_%s_%s_%s_tree.json'%(lineage, segment, resolution))
+                targets.append('auspice/seattleflu_flu_seasonal_%s_%s_%s.json'%(lineage, segment, resolution))
 
     cpus = get_cpus(len(targets))
     memory = 1800 * cpus

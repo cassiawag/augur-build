@@ -1,20 +1,20 @@
 region	africa	4.070194	21.824559
 region	china	35.000074	104.999927
 region	europe	49.646237	10.799454
-region	japan_korea	35.845119	136.736386
-region	north_america	28.2367447	-97.738017
-region	oceania	-25.0562891	152.008576
-region	south_america	-13.083583	-58.470721
-region	south_asia	24.485438	76.513158
-region	southeast_asia	3.020567	112.390683
-region	west_asia	34.000094	48.732280
-region	central_america	17.376838	-93.741977
-region	northeast_usa	42.399817	-73.950238
-region	midwest_usa	41.296461	-90.887825
-region	south_usa	33.160184	-89.238176
-region	west_usa	37.382078	-114.856226
-region	canada	52.669457	-98.194765
-region	seattle	47.606271	-122.333037
+region	Japan Korea	35.845119	136.736386
+region	North America	28.2367447	-97.738017
+region	Oceania	-25.0562891	152.008576
+region	South America	-13.083583	-58.470721
+region	South Asia	24.485438	76.513158
+region	Southeast Asia	3.020567	112.390683
+region	West Asia	34.000094	48.732280
+region	Central America	17.376838	-93.741977
+region	Northeast USA	42.399817	-73.950238
+region	Midwest USA	41.296461	-90.887825
+region	South USA	33.160184	-89.238176
+region	West USA	37.382078	-114.856226
+region	Canada	52.669457	-98.194765
+region	Seattle	47.606271	-122.333037
 
 # Eventually centroids will be computed by ID3C, but for now I generated these
 # ad-hoc by running the following within the seattleflu/seattle-geojsons repo:

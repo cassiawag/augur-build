@@ -9,8 +9,9 @@ import numpy as np
 from treetime.utils import numeric_date
 from augur.utils import read_metadata, get_numerical_dates
 
-regions = ['africa', 'europe', 'north_america', 'china', 'south_asia',
-           'japan_korea', 'oceania', 'south_america', 'southeast_asia', 'west_asia']
+regions = ['China', 'Southeast Asia', 'South Asia', 'Japan Korea', 'Oceania',
+           'West Asia', 'Africa', 'Europe', 'South America', 'Central America',
+           'Northeast USA', 'Midwest USA', 'South USA', 'West USA', 'Canada']
 subcats = regions
 
 def read_strain_list(fname):
@@ -300,7 +301,7 @@ if __name__ == '__main__':
     for segment in metadata:
         filtered_metadata[segment] = {}
         for name in metadata[segment]:
-            if metadata[segment][name]["region"] == "seattle":
+            if metadata[segment][name]["region"] == "Seattle":
                 filtered_metadata[segment][name] = metadata[segment][name]
                 included_strains.append(name)
             if name in sequence_names_by_segment[segment]:
