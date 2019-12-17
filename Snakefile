@@ -27,8 +27,8 @@ def reference_strain(wildcards):
 
 rule all:
     input:
-        auspice_json = expand("auspice/seattleflu_flu_seasonal_{lineage}_{segment}_{resolution}.json", lineage=lineages, segment=segments, resolution=resolutions),
-        auspice_aggregated_json = expand("auspice/seattleflu_flu_seasonal_{lineage}_genome_{resolution}.json", lineage=lineages, resolution=resolutions)
+        auspice_json = expand("auspice/flu_seasonal_{lineage}_{segment}_{resolution}.json", lineage=lineages, segment=segments, resolution=resolutions),
+        auspice_aggregated_json = expand("auspice/flu_seasonal_{lineage}_genome_{resolution}.json", lineage=lineages, resolution=resolutions)
 
 rule files:
     params:
@@ -510,7 +510,7 @@ rule export:
         description = files.description,
         node_data = _get_node_data_for_export
     output:
-        auspice_json = "auspice/seattleflu_flu_seasonal_{lineage}_{segment}_{resolution}.json"
+        auspice_json = "auspice/flu_seasonal_{lineage}_{segment}_{resolution}.json"
     shell:
         """
         augur export v2 \
@@ -881,7 +881,7 @@ rule export_aggregated:
         description = files.description,
         node_data = _get_node_data_for_export_aggregated
     output:
-        auspice_json = "results/aggregated/seattle_flu_seasonal_{lineage}_genome_{resolution}.json"
+        auspice_json = "auspice/flu_seasonal_{lineage}_genome_{resolution}.json"
     shell:
         """
         augur export v2 \
@@ -895,22 +895,22 @@ rule export_aggregated:
             --output {output.auspice_json}
         """
 
-rule hide_nodes_aggregated:
-    message:
-        """
-        hide_nodes_aggregated: Hide basal reassortant nodes in auspice JSON
-        {wildcards.lineage} {wildcards.resolution}
-        """
-    input:
-        auspice_json = rules.export_aggregated.output.auspice_json
-    output:
-        auspice_json = "auspice/seattleflu_flu_seasonal_{lineage}_genome_{resolution}.json"
-    shell:
-        """
-        python scripts/annotate_hidden_nodes.py \
-            --input {input.auspice_json} \
-            --output {output.auspice_json}
-        """
+# rule hide_nodes_aggregated:
+#     message:
+#         """
+#         hide_nodes_aggregated: Hide basal reassortant nodes in auspice JSON
+#         {wildcards.lineage} {wildcards.resolution}
+#         """
+#     input:
+#         auspice_json = rules.export_aggregated.output.auspice_json
+#     output:
+#         auspice_json = "auspice/seattleflu_flu_seasonal_{lineage}_genome_{resolution}.json"
+#     shell:
+#         """
+#         python scripts/annotate_hidden_nodes.py \
+#             --input {input.auspice_json} \
+#             --output {output.auspice_json}
+#         """
 
 rule clean:
     message: "Removing directories: {params}"

@@ -14,8 +14,8 @@ def parse_args():
         description="Extract sample sequences by name",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
-    parser.add_argument("--input", required=True, metavar="JSON", help="Tree JSON from augur export")
-    parser.add_argument("--output", required=True, metavar="JSON", help="Tree JSON for auspice")
+    parser.add_argument("--input", required=True, metavar="JSON", help="Unified JSON from augur export v2")
+    parser.add_argument("--output", required=True, metavar="JSON", help="Unified JSON for auspice")
     return parser.parse_args()
 
 
@@ -37,25 +37,24 @@ def post_order_traversal_iterative(tree, fn):
 
 def get_cluster(node):
     try:
-        return node["attr"]["cluster"]
+        return node["node_attrs"]["cluster"]
     except KeyError:
         return False
 
 def make_stub(node):
 
-    if "cluster" not in node["attr"] or not node["attr"]["cluster"]:
+    if "cluster" not in node["node_attrs"] or not node["node_attrs"]["cluster"]:
         return node
 
     stub = {
         "strain": "stub_{}".format(get_cluster(node)),
-        "attr": {
-            "num_date": node["attr"]["num_date"] - 0.05,
-            "div": node["attr"]["div"] - 0.0002,
-            "cluster": node["attr"]["cluster"]
+        "node_attrs": {
+            "num_date": node["node_attrs"]["num_date"] - 0.05,
+            "div": node["node_attrs"]["div"] - 0.0002,
+            "cluster": node["node_attrs"]["cluster"],
+            "hidden": "always"
         },
-        "hidden": "always",
-        "children": [node],
-        "clade": int("100000{}".format(get_cluster(node))) # required in auspice v1
+        "children": [node]
     }
 
     return stub
@@ -66,9 +65,9 @@ def mark_clusters_as_hidden(node):
         return # ignore terminal nodes
     child_clusters = {get_cluster(child) for child in node["children"]}
     if len(child_clusters) == 1:
-        node["attr"]["cluster"] = child_clusters.pop()
+        node["node_attrs"]["cluster"] = child_clusters.pop()
     else:
-        node["hidden"] = "always"
+        node["node_attrs"]["hidden"] = "always"
         # the children here will each lead to a different cluster
         # and we want to make them "stubs", i.e. not show the long
         # branch length leading to the start of the cluster
@@ -102,16 +101,16 @@ def shift_hidden_div_and_time(flat_tree):
     """
     # remove clade labels so there isn't floating text
     for n in flat_tree:
-        n['attr']['clade_annotation'] = None
+        n['node_attrs']['clade_annotation'] = None
 
     # find the date of the earliest node which has a cluster and modify all
     # nodes earlier than that to have that date
-    min_date = min([n["attr"]["num_date"] for n in flat_tree if get_cluster(n)])
+    min_date = min([n["node_attrs"]["num_date"] for n in flat_tree if get_cluster(n)])
     for n in flat_tree:
-        if n["attr"]["num_date"] < min_date:
-            n["attr"]["num_date"] = min_date
-            if "num_date_confidence" in n["attr"]:
-                del n["attr"]["num_date_confidence"]
+        if n["node_attrs"]["num_date"] < min_date:
+            n["node_attrs"]["num_date"] = min_date
+            if "num_date_confidence" in n["node_attrs"]:
+                del n["node_attrs"]["num_date_confidence"]
 
     # find the min divergence (cumulative!) for each cluster
     min_div_per_cluster = {}
@@ -119,28 +118,30 @@ def shift_hidden_div_and_time(flat_tree):
         cluster = get_cluster(n)
         if cluster:
             if cluster not in min_div_per_cluster:
-                min_div_per_cluster[cluster] = n["attr"]["div"]
-            elif n["attr"]["div"] < min_div_per_cluster[cluster]:
-                min_div_per_cluster[cluster] = n["attr"]["div"]
+                min_div_per_cluster[cluster] = n["node_attrs"]["div"]
+            elif n["node_attrs"]["div"] < min_div_per_cluster[cluster]:
+                min_div_per_cluster[cluster] = n["node_attrs"]["div"]
 
     # modify clusters to each have divergence starting from 0
     for n in flat_tree:
         cluster = get_cluster(n)
-        if "hidden" in n:
-            n["attr"]["div"] = 0
+        if "hidden" in n["node_attrs"]:
+            n["node_attrs"]["div"] = 0
         elif cluster:
-            n["attr"]["div"] -= min_div_per_cluster[cluster]
+            n["node_attrs"]["div"] -= min_div_per_cluster[cluster]
 
 
 if __name__ == '__main__':
     args = parse_args()
 
     with open(args.input, "rU") as fh:
-        tree = json.load(fh)
+        unified = json.load(fh)
 
+    tree = unified["tree"]
     post_order_traversal_iterative(tree, mark_clusters_as_hidden)
     flat_tree = flatten_tree(tree)
     shift_hidden_div_and_time(flat_tree)
 
+    unified["tree"] = tree
     with open(args.output, "w") as fh:
-        json.dump(tree, fh, indent=2, sort_keys=True)
+        json.dump(unified, fh, indent=2, sort_keys=True)
