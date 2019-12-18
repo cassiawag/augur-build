@@ -2,12 +2,14 @@
     Given auspice-ready JSONs (i.e. from `augur export`) produce an
     auspice-compatable JSON which hides nodes that are basal to monophyletic
     clusters (as defined by the 'cluster' node attribute).
-    NOTE: as of augur v6 this capability will be build into `augur export`
-    NOTE: designed to work with augur v5 & auspice v1
     original author: James Hadfield                                 July 2019
 """
 import argparse
 import json
+
+## Magics / hardcoded parameters
+STUB_DIV_LENGTH = 0.0002
+STUB_TIME_LENGTH = 0.05 # ~18 days
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -37,21 +39,26 @@ def post_order_traversal_iterative(tree, fn):
 
 def get_cluster(node):
     try:
-        return node["node_attrs"]["cluster"]
+        return node["node_attrs"]["cluster"]["value"]
     except KeyError:
         return False
 
 def make_stub(node):
-
-    if "cluster" not in node["node_attrs"] or not node["node_attrs"]["cluster"]:
+    cluster = get_cluster(node)
+    # if the node doesn't have a cluster then it doesn't need to be a stub!
+    if not cluster:
         return node
 
     stub = {
-        "strain": "stub_{}".format(get_cluster(node)),
+        "name": "stub_{}".format(cluster),
         "node_attrs": {
-            "num_date": node["node_attrs"]["num_date"] - 0.05,
-            "div": node["node_attrs"]["div"] - 0.0002,
-            "cluster": node["node_attrs"]["cluster"],
+            "num_date": {
+                "value": node["node_attrs"]["num_date"]["value"] - STUB_TIME_LENGTH
+            },
+            "div": node["node_attrs"]["div"] - STUB_DIV_LENGTH,
+            "cluster": {
+                "value": cluster
+            },
             "hidden": "always"
         },
         "children": [node]
@@ -64,9 +71,20 @@ def mark_clusters_as_hidden(node):
     if not "children" in node:
         return # ignore terminal nodes
     child_clusters = {get_cluster(child) for child in node["children"]}
-    if len(child_clusters) == 1:
-        node["node_attrs"]["cluster"] = child_clusters.pop()
+    # if (node["name"] == "NODE_0000000"): import pdb; pdb.set_trace()
+    if child_clusters == {False}:
+        # nodes where all children don't have a cluster should be hidden
+        node["node_attrs"]["hidden"] = "always"
+    elif len(child_clusters) == 1:
+        # clusters are not annotated on internal nodes, but this sets them
+        # on internal nodes if all children (a) have a cluster set and
+        # (b) the cluster is the same
+        node["node_attrs"]["cluster"] = {
+            "value": child_clusters.pop()
+        }
     else:
+        # nodes with different clusters amoung the children are those we want to
+        # "chop off"
         node["node_attrs"]["hidden"] = "always"
         # the children here will each lead to a different cluster
         # and we want to make them "stubs", i.e. not show the long
@@ -99,18 +117,14 @@ def shift_hidden_div_and_time(flat_tree):
 
         Note: plenty of optimisation potential here
     """
-    # remove clade labels so there isn't floating text
-    for n in flat_tree:
-        n['node_attrs']['clade_annotation'] = None
 
     # find the date of the earliest node which has a cluster and modify all
     # nodes earlier than that to have that date
-    min_date = min([n["node_attrs"]["num_date"] for n in flat_tree if get_cluster(n)])
+    min_date = min([n["node_attrs"]["num_date"]["value"] for n in flat_tree if get_cluster(n)])
     for n in flat_tree:
-        if n["node_attrs"]["num_date"] < min_date:
-            n["node_attrs"]["num_date"] = min_date
-            if "num_date_confidence" in n["node_attrs"]:
-                del n["node_attrs"]["num_date_confidence"]
+        if n["node_attrs"]["num_date"]["value"] < min_date:
+            # setting the `num_date` here will also overwrite any confidences if they are set
+            n["node_attrs"]["num_date"] = {"value": min_date}
 
     # find the min divergence (cumulative!) for each cluster
     min_div_per_cluster = {}
