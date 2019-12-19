@@ -23,7 +23,7 @@ def get_metadata_from_id3c(id3c_url, id3c_username, id3c_password, output):
             # Only include rows with strain
             if record['strain']:
                 # Fix strain format
-                record['strain'] = "SFS-" + record['strain'][-8:]
+                record['strain'] = record['strain'][-8:] # this needs revision in ID3C to match format A/Washington/a2fb5c0f/2019
                 # Fix date format
                 record['date'] = re.sub(r'T\d+:\d+:[0-9\.]+\+[0-9\.]+:[0-9\.]+', '', record['date'])
                 # Include originating and submitting lab

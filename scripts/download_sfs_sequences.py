@@ -40,7 +40,7 @@ def get_sequences_from_id3c(url, username, password, lineage, segment, output):
         for line in r.iter_lines():
             if line:
                 sequence = json.loads(line)
-                strain = "SFS-" + sequence['sample'][-8:]
+                strain = sequence['sample'][-8:] # this needs revision in ID3C to match format A/Washington/a2fb5c0f/2019
                 fasta_file.write("".join([">", strain, "\n", sequence['seq'].lower(), "\n"]))
 
 
