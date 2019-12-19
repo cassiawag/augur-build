@@ -35,6 +35,7 @@ rule files:
         outliers = "config/outliers_{lineage}.txt",
         references = "config/references_{lineage}.txt",
         reference = "config/reference_{lineage}_{segment}.gb",
+        reference_genome = "config/reference_{lineage}_genome.gb",
         exclude_sites_genome = "config/exclude-sites_{lineage}_genome.txt",
         colors = "config/colors.tsv",
         lat_longs = "config/lat_longs.tsv",
@@ -571,7 +572,7 @@ rule align_clusters:
         """
     input:
         sequences = rules.clusters_intermediate.output,
-        reference = rules.reference_genome.output.ref_genome
+        reference = files.reference_genome
     output:
         alignment = "results/clusters/aligned_{lineage}_genome_{resolution}/{cluster}.fasta"
     shell:
@@ -746,7 +747,7 @@ rule translate_aggregated:
     input:
         tree = rules.refine_aggregated.output.tree,
         node_data = rules.ancestral_aggregated.output.node_data,
-        reference = rules.reference_genome.output.ref_genome
+        reference = files.reference_genome
     output:
         node_data = "results/aggregated/aa-muts_{lineage}_genome_{resolution}.json",
     shell:
