@@ -563,26 +563,6 @@ rule clusters_intermediate:
     shell:
         "cp {input} {output}"
 
-rule reference_genome:
-    message:
-        """
-        reference_genome: Creating full-genome reference genbank file
-        {wildcards.lineage}
-        """
-    input:
-        references = expand("config/reference_{{lineage}}_{segment}.gb", segment=segments)
-    params:
-        ref_strain = reference_strain
-    output:
-        ref_genome = "config/reference_{lineage}_genome.gb"
-    shell:
-        """
-        python3 scripts/create_ref_genome.py \
-            --references {input.references} \
-            --ref-strain {params.ref_strain} \
-            --output {output.ref_genome}
-        """
-
 rule align_clusters:
     message:
         """
