@@ -1,3 +1,6 @@
+from datetime import date
+from treetime.utils import numeric_date
+
 path_to_fauna = '../fauna'
 if os.environ.get('FAUNA_PATH'):
     path_to_fauna = os.environ.get('FAUNA_PATH')
@@ -13,8 +16,8 @@ wildcard_constraints:
     cluster = "[A-Za-z0-9]{8,10}"
 
 def viruses_per_month(wildcards):
-    vpm = {'1y': 400, '2y': 192} # should be a multiple of 16
-    return vpm[wildcards.resolution]
+    vpm = {'6m':384, '1y':192, '2y':96, '3y':64, '6y':32} # should be a multiple of 16
+    return vpm[wildcards.resolution] if wildcards.resolution in vpm else 5
 
 def reference_strain(wildcards):
     references = {
@@ -24,6 +27,16 @@ def reference_strain(wildcards):
         'yam': "B/Singapore/11/1994"
     }
     return references[wildcards.lineage]
+
+def min_date(wildcards):
+    now = numeric_date(date.today())
+    if wildcards.resolution[-1] == "y":
+        years_back = int(wildcards.resolution[:-1])
+    elif wildcards.resolution[-1] == "m":
+        years_back = int(wildcards.resolution[:-1]) / 12.
+    else:
+        years_back = 3
+    return now - years_back
 
 rule all:
     input:
@@ -156,6 +169,98 @@ rule concat_metadata:
             > {output.metadata}
         """
 
+rule prefilter:
+    message:
+        """
+        prefilter: Pre-filtering {wildcards.lineage} {wildcards.segment} {wildcards.resolution} sequences:
+          - less than {params.min_length} bases
+          - older than {params.min_date}
+          - outliers
+          - samples with missing region metadata
+          - egg-passaged samples
+        {wildcards.lineage} {wildcards.segment} {wildcards.resolution}
+        """
+    input:
+        sequences = rules.concat_sequences.output.sequences,
+        metadata = rules.concat_metadata.output.metadata,
+        exclude = files.outliers
+    output:
+        sequences = 'results/prefiltered_{lineage}_{segment}_{resolution}.fasta'
+    params:
+        min_length = 800,
+        min_date = min_date
+    shell:
+        """
+        augur filter \
+            --sequences {input.sequences} \
+            --metadata {input.metadata} \
+            --min-length {params.min_length} \
+            --min-date {params.min_date} \
+            --non-nucleotide \
+            --exclude {input.exclude} \
+            --exclude-where region=? passage=egg division=Washington \
+            --output {output}
+        """
+
+rule prealign:
+    message:
+        """
+        prealign: Aligning filtered sequences to {input.reference}
+          - filling gaps with N
+        {wildcards.lineage} {wildcards.segment} {wildcards.resolution}
+        """
+    input:
+        sequences = rules.prefilter.output.sequences,
+        reference = files.reference
+    output:
+        alignment = "results/prealigned_{lineage}_{segment}_{resolution}.fasta"
+    shell:
+        """
+        augur align \
+            --sequences {input.sequences} \
+            --reference-sequence {input.reference} \
+            --output {output.alignment} \
+            --fill-gaps \
+            --remove-reference \
+            --nthreads 1
+        """
+
+rule merge_prealignments:
+    message:
+        """
+        merge_prealignments: Create full-genome alignment FASTA file by merging aligned segment FASTAs
+        {wildcards.lineage}
+        """
+    input:
+        alignments = expand("results/prealigned_{{lineage}}_{segment}_{{resolution}}.fasta", segment=segments)
+    output:
+        genome_alignment = "results/prealigned_{lineage}_genome_{resolution}.fasta"
+    shell:
+        """
+        python3 scripts/merge_alignments.py \
+            --alignments {input.alignments} \
+            --output {output.genome_alignment}
+        """
+
+rule assign_priorities:
+    message:
+        """
+        assign_priorities: Assign selection priorities for each strain based on distance to Seattle strains
+        {wildcards.lineage}
+        """
+    input:
+        alignment = rules.merge_prealignments.output.genome_alignment,
+        metadata = "data/metadata_{lineage}_ha.tsv"
+    output:
+        mapping = "results/priorities_{lineage}_{resolution}.tsv"
+    shell:
+        """
+        python3 scripts/assign_priorities.py \
+            --alignment {input.alignment} \
+            --metadata {input.metadata} \
+            --output {output.mapping}
+        """
+
 rule filter:
     message:
         """
@@ -189,17 +294,20 @@ rule filter:
 rule select_strains:
     message:
         """
-        select_strains: Subsampling background strains, but include all strains with region=Seattle
+        select_strains: Subsampling background strains, but additional strains with region=Seattle
         {wildcards.lineage} {wildcards.resolution}
         """
     input:
         sequences = expand("results/filtered_{{lineage}}_{segment}.fasta", segment=segments),
         metadata = expand("data/metadata_{{lineage}}_{segment}.tsv", segment=segments),
-        include = files.references
+        include = files.references,
+        priorities = rules.assign_priorities.output.mapping
     output:
-        strains = "results/strains_{lineage}_{resolution}.txt",
+        strains = "results/strains_{lineage}_{resolution}.txt"
     params:
-        viruses_per_month = viruses_per_month
+        viruses_per_month = viruses_per_month,
+        focus_region = "Seattle",
+        extra_viruses_per_month = 10000
     shell:
         """
         python3 scripts/select_strains.py \
@@ -207,9 +315,12 @@ rule select_strains:
             --metadata {input.metadata} \
             --segments {segments} \
             --include {input.include} \
+            --priorities {input.priorities} \
             --lineage {wildcards.lineage} \
             --resolution {wildcards.resolution} \
-            --viruses_per_month {params.viruses_per_month} \
+            --viruses-per-month {params.viruses_per_month} \
+            --focus-region {params.focus_region} \
+            --extra-viruses-per-month {params.extra_viruses_per_month} \
             --output {output.strains}
         """
 
