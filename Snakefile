@@ -16,7 +16,7 @@ wildcard_constraints:
     cluster = "[A-Za-z0-9]{8,10}"
 
 def viruses_per_month(wildcards):
-    vpm = {'6m':384, '1y':192, '2y':96, '3y':64, '6y':32} # should be a multiple of 16
+    vpm = {'6m':320, '1y':160, '2y':80, '3y':48} # should be a multiple of 16
     return vpm[wildcards.resolution] if wildcards.resolution in vpm else 5
 
 def reference_strain(wildcards):

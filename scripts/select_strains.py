@@ -11,7 +11,8 @@ from augur.utils import read_metadata, get_numerical_dates
 
 regions = ['China', 'Southeast Asia', 'South Asia', 'Japan Korea', 'Oceania',
            'West Asia', 'Africa', 'Europe', 'South America', 'Central America',
-           'Northeast USA', 'Midwest USA', 'South USA', 'West USA', 'Canada']
+           'Northeast USA', 'Midwest USA', 'South USA', 'West USA', 'Canada',
+           'Seattle']
 subcats = regions
 
 def read_strain_list(fname):
