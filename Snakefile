@@ -1,5 +1,26 @@
+import datetime
 from datetime import date
 from treetime.utils import numeric_date
+
+def float_to_datestring(time):
+    """Convert a floating point date from TreeTime `numeric_date` to a date string
+    """
+    # Extract the year and remainder from the floating point date.
+    year = int(time)
+    remainder = time - year
+
+    # Calculate the day of the year (out of 365 + 0.25 for leap years).
+    tm_yday = int(remainder * 365.25)
+    if tm_yday == 0:
+        tm_yday = 1
+
+    # Construct a date object from the year and day of the year.
+    date = datetime.datetime.strptime("%s-%s" % (year, tm_yday), "%Y-%j")
+
+    # Build the date string with zero-padded months and days.
+    date_string = "%s-%.2i-%.2i" % (date.year, date.month, date.day)
+
+    return date_string
 
 path_to_fauna = '../fauna'
 if os.environ.get('FAUNA_PATH'):
@@ -7,16 +28,16 @@ if os.environ.get('FAUNA_PATH'):
 
 segments = ['ha', 'na', 'pb2', 'pb1', 'pa', 'np', 'mp', 'ns']
 lineages = ['h3n2', 'h1n1pdm', 'vic', 'yam']
-resolutions = ['1y']
+resolutions = ['1y', '18-19y']
 
 wildcard_constraints:
     lineage = "[A-Za-z0-9]{3,7}",
     segment = "[A-Za-z0-9]{2,3}",
-    resolution = "[A-Za-z0-9]{2}",
+    resolution = "[A-Za-z0-9\-]{2,6}",
     cluster = "[A-Za-z0-9]{8,10}"
 
 def viruses_per_month(wildcards):
-    vpm = {'1y':480, '2y':240} # should be a multiple of 16
+    vpm = {'1y':480, '2y':240, '18-19y':480} # should be a multiple of 16
     return vpm[wildcards.resolution] if wildcards.resolution in vpm else 5
 
 def reference_strain(wildcards):
@@ -28,15 +49,27 @@ def reference_strain(wildcards):
     }
     return references[wildcards.lineage]
 
+# numeric
 def min_date(wildcards):
     now = numeric_date(date.today())
-    if wildcards.resolution[-1] == "y":
-        years_back = int(wildcards.resolution[:-1])
-    elif wildcards.resolution[-1] == "m":
-        years_back = int(wildcards.resolution[:-1]) / 12.
-    else:
-        years_back = 3
-    return now - years_back
+    if wildcards.resolution == "1y":
+        return now - 1.0
+    if wildcards.resolution == "18-19y":
+        return 2018.42  # 2018-06-01
+    return now - 3
+
+# numeric
+def max_date(wildcards):
+    now = numeric_date(date.today())
+    if wildcards.resolution == "1y":
+        return now
+    if wildcards.resolution == "18-19y":
+        return 2019.75  # 2019-09-31
+    return now
+
+# YYYY-MM-DD YYYY-MM-DD
+def time_interval(wildcards):
+    return float_to_datestring(max_date(wildcards)) + " " + float_to_datestring(min_date(wildcards))
 
 rule all:
     input:
@@ -175,6 +208,7 @@ rule prefilter:
         prefilter: Pre-filtering {wildcards.lineage} {wildcards.segment} {wildcards.resolution} sequences:
           - less than {params.min_length} bases
           - older than {params.min_date}
+          - newer than {params.max_date}
           - outliers
           - samples with missing region metadata
           - egg-passaged samples
@@ -188,7 +222,8 @@ rule prefilter:
         sequences = 'results/prefiltered_{lineage}_{segment}_{resolution}.fasta'
     params:
         min_length = 800,
-        min_date = min_date
+        min_date = min_date,
+        max_date = max_date
     shell:
         """
         augur filter \
@@ -196,6 +231,7 @@ rule prefilter:
             --metadata {input.metadata} \
             --min-length {params.min_length} \
             --min-date {params.min_date} \
+            --max-date {params.max_date} \
             --non-nucleotide \
             --exclude {input.exclude} \
             --exclude-where region=? passage=egg division=Washington \
@@ -307,7 +343,8 @@ rule select_strains:
     params:
         viruses_per_month = viruses_per_month,
         focus_region = "Seattle",
-        extra_viruses_per_month = 10000
+        extra_viruses_per_month = 10000,
+        time_interval = time_interval
     shell:
         """
         python3 scripts/select_strains.py \
@@ -317,7 +354,7 @@ rule select_strains:
             --include {input.include} \
             --priorities {input.priorities} \
             --lineage {wildcards.lineage} \
-            --resolution {wildcards.resolution} \
+            --time-interval {params.time_interval} \
             --viruses-per-month {params.viruses_per_month} \
             --focus-region {params.focus_region} \
             --extra-viruses-per-month {params.extra_viruses_per_month} \
