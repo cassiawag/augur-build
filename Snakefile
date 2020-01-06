@@ -55,7 +55,7 @@ def min_date(wildcards):
     if wildcards.resolution == "1y":
         return now - 1.0
     if wildcards.resolution == "18-19y":
-        return 2018.42  # 2018-06-01
+        return 2018.5  # 2018-07-01
     return now - 3
 
 # numeric
