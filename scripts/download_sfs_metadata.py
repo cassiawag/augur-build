@@ -24,8 +24,6 @@ def get_metadata_from_id3c(id3c_url, id3c_username, id3c_password, output):
             if record['strain']:
                 # Fix strain format
                 record['strain'] = record['strain'][-8:] # this needs revision in ID3C to match format A/Washington/a2fb5c0f/2019
-                # Fix date format
-                record['date'] = re.sub(r'T\d+:\d+:[0-9\.]+\+[0-9\.]+:[0-9\.]+', '', record['date'])
                 # Include originating and submitting lab
                 record['originating_lab'] = "Seattle Flu Study"
                 record['submitting_lab'] = "Seattle Flu Study"
@@ -44,7 +42,7 @@ if __name__ == '__main__':
         help="The output file for metadata, expected to be TSV file")
     args = parser.parse_args()
 
-    id3c_url = urljoin(os.environ["ID3C_URL"] + "/", "v2/shipping/augur-build-metadata")
+    id3c_url = urljoin(os.environ["ID3C_URL"] + "/", "v3/shipping/augur-build-metadata")
     id3c_username = os.environ["ID3C_USERNAME"]
     id3c_password = os.environ["ID3C_PASSWORD"]
 
