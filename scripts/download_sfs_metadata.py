@@ -20,12 +20,10 @@ def get_metadata_from_id3c(id3c_url, id3c_username, id3c_password, output):
             # Write the TSV header
             if i == 0:
                 tsv_writer.writerow(record.keys())
-            # Only include rows with strain
-            if record['strain']:
+            # Only include rows with strain & date
+            if record['strain'] and record['date']:
                 # Fix strain format
                 record['strain'] = record['strain'][-8:] # this needs revision in ID3C to match format A/Washington/a2fb5c0f/2019
-                # Fix date format
-                record['date'] = re.sub(r'T\d+:\d+:[0-9\.]+\+[0-9\.]+:[0-9\.]+', '', record['date'])
                 # Include originating and submitting lab
                 record['originating_lab'] = "Seattle Flu Study"
                 record['submitting_lab'] = "Seattle Flu Study"
