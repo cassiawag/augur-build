@@ -17,6 +17,7 @@ A/Christchurch/16/2010NIB-74xp13/202
 A/Dakar/3/2014
 A/Guatemala/6/2019
 A/Guatemala/150/2018
+A/Hebei-haigang/SWL1572/2019
 A/HongKong/H090-665-V1/2009
 A/HongKong/H090-667-V1/2009
 A/HongKong/H090-667-V2/2009
