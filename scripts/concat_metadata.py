@@ -127,6 +127,8 @@ def select(file, mergeby, fields):
                         values.append("?")
                 else:
                     values.append("?")
+            # Remove quotes to avoid read_metadata error later
+            values = list(map(lambda x: x.replace('"', ''), values))
             mapping[row[mergeby]] = values
     for key, values in mapping.items():
         print(str(key) + "\t" + "\t".join(values))
